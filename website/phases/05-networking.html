@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Networking Fundamentals | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="04-shell-scripting.html" class="ctx-link">Phase 04: Shell Scripting</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 05: Networking Fundamentals</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="06-git.html" class="ctx-link">Phase 06: Git & Git Workflows</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 05</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">Networking Fundamentals</h1>
+        <p class="page-subtitle">Understand IP addresses, DNS, TCP/IP, and HTTP — the foundation for all DevOps, Docker, and Kubernetes communication.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="03-linux.html">Phase 03: Linux Basics</a> (knowing how to run commands in the terminal)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How computers talk across networks using IP addresses and Ports.</li>
+            <li>How DNS resolves names to IP addresses.</li>
+            <li>The OSI Model and core protocols (TCP, UDP, HTTP).</li>
+            <li>Essential Linux networking commands for troubleshooting.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Networking is the invisible plumbing that connects every piece of software you run. In DevOps, networking is everywhere: Docker uses virtual bridge networks, Kubernetes uses complex overlay networks and Service IPs, AWS uses Virtual Private Clouds (VPCs), and Load Balancers route HTTP traffic from the public internet into your private servers.</p>
+          <p>Without a solid grasp of IP addressing, subnets, ports, and DNS, you simply cannot debug a failing deployment. When an application can't connect to a database, 90% of the time it's a networking issue, not a code issue.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>You run an app locally on <code>localhost:3000</code>. It works on your machine because there are no firewalls, no subnets, and no routing tables between the frontend and the backend. Everything is implicitly trusted.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>In production, your app runs in a private cloud subnet, behind a load balancer, with strict firewall rules. Understanding networking allows you to securely expose the app to the internet while keeping databases hidden, and to troubleshoot when parts of the system can't talk to each other.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of networking like the postal system. The IP address is the street address of an apartment building (the server). The Port is the apartment number (the specific app running on that server). DNS is the contact book on your phone, translating a name like "Alice" into her actual address.</p>
+          <div class="model-chain">
+            <span class="model-item">Browser</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">DNS Resolution</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Load Balancer IP</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Port 443 (TLS)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">HTTP Server (NestJS:3000)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>The OSI Model (Simplified)</h3>
+          <p>Networking happens in layers. A simplified 4-layer model is all you need for DevOps:</p>
+          <ul>
+            <li><strong>Application Layer:</strong> HTTP/HTTPS. The actual data being sent (JSON, HTML).</li>
+            <li><strong>Transport Layer:</strong> TCP/UDP. Ensures the data gets there reliably and in order (TCP) or quickly without guarantees (UDP). Defines the Port number.</li>
+            <li><strong>Internet Layer:</strong> IP (Internet Protocol). Handles IP addresses and routing packets across different networks.</li>
+            <li><strong>Network Access Layer:</strong> Ethernet/MAC addresses. The physical cables and local switches.</li>
+          </ul>
+
+          <h3>IP Addresses & CIDR</h3>
+          <p>An IPv4 address (e.g., <code>192.168.1.5</code>) is 32 bits long, divided into 4 octets. Because public IPs ran out, we use <strong>Private IP ranges</strong> (10.x.x.x, 172.16-31.x.x, 192.168.x.x) for internal networks.</p>
+          <p><strong>CIDR Notation</strong> defines subnets (network sizes). <code>/32</code> is a single IP. <code>/24</code> means 256 IPs (common for home networks, e.g., 192.168.1.0/24). <code>/16</code> means 65,536 IPs (common for AWS VPCs, e.g., 10.0.0.0/16).</p>
+
+          <h3>TCP vs UDP & Ports</h3>
+          <p><strong>TCP</strong> uses a 3-way handshake (SYN, SYN-ACK, ACK) to establish a reliable connection. Used for HTTP, SSH, Databases. <strong>UDP</strong> just fires packets blindly. Used for DNS, video streaming.</p>
+          <p>Ports identify the application. 0-1023 are privileged well-known ports (80 HTTP, 443 HTTPS, 22 SSH). Above that are ephemeral ports and application ports (5432 Postgres, 3000 Node, 5173 Vite).</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">DNS AND HTTP WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">User types domain</div>
+              <div class="flow-label">Browser</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">DNS Query (UDP 53)</div>
+              <div class="flow-label">Resolves IP</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">TCP Handshake</div>
+              <div class="flow-label">SYN / ACK</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">TLS Handshake</div>
+              <div class="flow-label">Secure Channel</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">HTTP GET</div>
+              <div class="flow-label">Data Transfer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Subnet</strong></td><td>A logical subdivision of an IP network. Can be public (internet access) or private.</td><td>10.0.1.0/24 (Private Subnet)</td></tr>
+            <tr><td><strong>DNS Record Types</strong></td><td>A (IPv4), AAAA (IPv6), CNAME (alias), MX (mail), TXT (verification).</td><td>A record pointing taskflow.com to 198.51.100.1</td></tr>
+            <tr><td><strong>Load Balancer</strong></td><td>A device that distributes network traffic across multiple servers.</td><td>AWS ALB, Nginx Proxy</td></tr>
+            <tr><td><strong>TLS (HTTPS)</strong></td><td>Transport Layer Security. Encrypts HTTP traffic using certificates.</td><td>Let's Encrypt CA certificate</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>When you deploy TaskFlow:</p>
+          <ul>
+            <li>Your backend (NestJS) listens on port <strong>3000</strong>. Your database (PostgreSQL) listens on port <strong>5432</strong>.</li>
+            <li>You will configure a <strong>private Docker network</strong> so the backend can talk to the database using the internal DNS name <code>db</code>, but the database is not exposed to the public internet.</li>
+            <li>A reverse proxy (like Nginx) listens on port <strong>80/443</strong> on the public IP, handles the TLS decryption, and forwards the HTTP traffic to the internal NestJS container on port 3000.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Check what ports are actively listening on your machine
+ss -tulpn</code></pre>
+          <div class="code-annotation">↑ Shows TCP/UDP sockets, listening state, processes, and port numbers. Essential for finding what is blocking port 3000!</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Perform a DNS lookup to see the IP of a domain
+dig google.com +short</code></pre>
+          <div class="code-annotation">↑ Queries DNS servers to return the A record (IPv4 address) of the domain.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Test if a specific port is open and reachable on a remote host
+nc -zv 192.168.1.50 5432</code></pre>
+          <div class="code-annotation">↑ Netcat tries to open a TCP connection to the IP on port 5432. Great for testing if a firewall is blocking your DB.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Binding to localhost (127.0.0.1) inside a container</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> When running inside Docker or a VM, your app must bind to <code>0.0.0.0</code> (all interfaces) to receive traffic from outside the container. If NestJS binds to 127.0.0.1, the port mapping will fail.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: "Connection Refused"</span>
+            <span class="ts-cause">Cause: The server IP is reachable, but absolutely nothing is listening on that port. Either the app crashed, or you typed the wrong port.</span>
+            <span class="ts-fix">Fix: SSH into server and run <code>ss -tulpn</code> to check listening ports.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: "Connection Timeout"</span>
+            <span class="ts-cause">Cause: Packets are being dropped into a black hole. Almost always a Firewall (AWS Security Group) or routing issue.</span>
+            <span class="ts-fix">Fix: Check firewall rules allowing ingress on that specific port.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Investigate Your Local Network</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Run <code>ip addr show</code> (Linux) or <code>ipconfig</code> (Windows) to find your computer's private IP address.</li>
+            <li>Run <code>dig github.com</code> to see how DNS resolves GitHub's IP address. Note the "Query time".</li>
+            <li>Run <code>curl -v https://google.com</code>. Read the verbose output to see the DNS resolution, TCP handshake, TLS handshake, and HTTP headers in real time.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why do we use private IP addresses (like 10.0.x.x) instead of giving every server a public IP?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Security and IPv4 scarcity. Servers with private IPs cannot be reached directly from the internet, protecting them from hackers. They also don't consume limited public IPv4 addresses.</p></div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between a Connection Timeout and a Connection Refused?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Connection Refused means the host was reached but rejected the connection (usually no app listening). Timeout means the packet never got a response, usually blocked by a firewall.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="03-linux.html" class="cross-link-chip">🐧 Linux Basics</a>
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker Networking</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you understand how computers talk to each other over networks, we need to look at how we manage the code running on those computers. Next, we dive deep into Git and version control workflows.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

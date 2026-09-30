@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 11 — Cloud & AWS | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="10-cicd.html" class="ctx-link">Phase 10: CI/CD</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 11: Cloud & AWS</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="12-kubernetes-core.html" class="ctx-link">Phase 12: Kubernetes Core</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 11</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Cloud & AWS</h1>
+        <p class="page-subtitle">Understand cloud computing fundamentals and master core AWS services like EC2, VPC, IAM, and Load Balancing to prepare for Kubernetes.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="03-linux.html">Phase 2: Linux Basics</a> (Networking & SSH)</li>
+            <li><a href="08-docker-core.html">Phase 6: Docker</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The difference between IaaS, PaaS, and SaaS.</li>
+            <li>How to architect a VPC with public and private subnets.</li>
+            <li>Managing AWS infrastructure components like EC2, S3, and ALB.</li>
+            <li>Implementing secure IAM policies and roles.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Cloud computing is the practice of renting compute, storage, and networking resources from a provider instead of buying and managing physical hardware yourself. Services are on-demand, pay-per-use, and globally distributed.</p>
+          <p>Cloud services are generally categorized into three models:</p>
+          <ul>
+            <li><strong>IaaS (Infrastructure as a Service):</strong> You manage everything from the OS layer upwards. Example: AWS EC2.</li>
+            <li><strong>PaaS (Platform as a Service):</strong> You manage only the application code and data. Example: AWS RDS, Heroku.</li>
+            <li><strong>SaaS (Software as a Service):</strong> You just use the software. Example: Gmail, Salesforce.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Deploying a new server took weeks of purchasing hardware, racking it in a datacenter, setting up networking, and installing an OS. Scaling up for traffic spikes was nearly impossible.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>You can provision thousands of servers globally in minutes using APIs. You only pay for what you use, and can auto-scale resources dynamically based on demand.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of AWS as a massive, globally distributed data center that you interact with entirely via remote controls (APIs/CLI). A VPC is your own fenced-off plot of land in that data center.</p>
+          <div class="model-chain">
+            <span class="model-item">Region</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">VPC</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Subnet</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">EC2 / ALB / RDS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>AWS operates a global infrastructure of <strong>Regions</strong> (physical locations like us-east-1). Each region contains multiple <strong>Availability Zones (AZs)</strong>, which are isolated data centers. Deploying across multiple AZs ensures high availability.</p>
+          <p>At the core of AWS networking is the <strong>VPC (Virtual Private Cloud)</strong>. A VPC uses a CIDR block (e.g., 10.0.0.0/16) and is divided into subnets.</p>
+          <ul>
+            <li><strong>Public Subnets:</strong> Have a route to an Internet Gateway. They host load balancers and bastion hosts.</li>
+            <li><strong>Private Subnets:</strong> Do not have direct internet access. They host application servers (like EKS worker nodes) and databases (RDS). A NAT Gateway allows them to pull updates from the internet securely.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">AWS WEB ARCHITECTURE</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Route 53 DNS</div>
+              <div class="flow-label">User Request</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">ALB (Public Subnet)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">EKS / EC2 (Private Subnet)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">RDS (Private Subnet)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">🖥️</div>
+            <div class="concept-card-title">EC2 (Elastic Compute Cloud)</div>
+            <div class="concept-card-desc">Virtual machines. Can be categorized by instance types (e.g., t3.micro for burstable CPU, c5.xlarge for compute optimized). Use AMIs (Amazon Machine Images) to template OS configurations.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🗄️</div>
+            <div class="concept-card-title">Storage (EBS, S3, EFS)</div>
+            <div class="concept-card-desc">EBS is block storage attached to EC2. S3 is object storage for files. EFS is a shared file system.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🔐</div>
+            <div class="concept-card-title">IAM (Identity and Access Management)</div>
+            <div class="concept-card-desc">Users, Groups, Roles, and Policies to control who can do what. Use Roles for EC2/EKS nodes instead of hardcoded credentials.</div>
+          </div>
+        </div>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Security Group</td><td>Stateful, instance-level firewall rules</td><td>Allow port 80/443 inbound to ALB</td></tr>
+            <tr><td>Network ACL</td><td>Stateless, subnet-level firewall rules</td><td>Block a specific IP range from a subnet</td></tr>
+            <tr><td>ALB</td><td>Layer 7 Load Balancer</td><td>Route traffic based on HTTP path</td></tr>
+            <tr><td>Route 53</td><td>Highly available DNS service</td><td>Map domain to ALB Alias record</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>TaskFlow runs in an AWS VPC (10.0.0.0/16) across 3 AZs. The ALB sits in the public subnets (10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24) receiving traffic. It forwards to the NestJS backend and React frontend hosted in an EKS cluster running in private subnets. The PostgreSQL database is an RDS instance, also in the private subnets. An S3 bucket serves as a backup or static hosting alternative for the React frontend.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Configure AWS CLI credentials
+aws configure
+
+# List all S3 buckets
+aws s3 ls
+
+# Describe running EC2 instances and filter for the TaskFlow application
+aws ec2 describe-instances --filters "Name=tag:App,Values=TaskFlow"
+
+# Create an S3 bucket for the TaskFlow frontend
+aws s3 mb s3://taskflow-frontend-static</code></pre>
+          <div class="code-annotation">↑ The AWS CLI allows you to interact with AWS APIs directly from your terminal. Never commit the access keys from `aws configure` to version control.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Hardcoding AWS Access Keys in code or GitHub</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Use IAM Roles attached to EC2 instances or EKS pods. If running locally, rely on `~/.aws/credentials` or environment variables, never source code.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Putting databases in public subnets</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Always place RDS and core worker nodes in private subnets. Use public subnets only for resources that MUST be internet-facing (like ALBs and NAT Gateways).</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Cannot SSH into an EC2 instance</span>
+            <span class="ts-cause">Cause: Security group is missing inbound rule on port 22, or the wrong key pair is used.</span>
+            <span class="ts-fix">Fix: Ensure Security Group allows port 22 from your IP and use the correct `.pem` key.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Pods in private subnet cannot pull Docker images</span>
+            <span class="ts-cause">Cause: The private subnet lacks a NAT Gateway in the route table.</span>
+            <span class="ts-fix">Fix: Create a NAT Gateway in a public subnet and add a route `0.0.0.0/0` targeting it in the private subnet's route table.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">AWS CLI Explorer</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Install the `aws-cli` on your local machine.</li>
+            <li>Run `aws configure` to set up an IAM user with programmatic access.</li>
+            <li>Run `aws ec2 describe-vpcs` to see the default VPC in your region.</li>
+            <li>Create a new S3 bucket: `aws s3 mb s3://my-test-bucket-[YOUR-NAME]`.</li>
+            <li>Upload a file: `echo "Hello" > test.txt && aws s3 cp test.txt s3://my-test-bucket-[YOUR-NAME]/`.</li>
+            <li>Clean up: `aws s3 rm s3://my-test-bucket-[YOUR-NAME]/test.txt` and `aws s3 rb s3://my-test-bucket-[YOUR-NAME]`.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why should you use an IAM Role instead of an IAM User for an EC2 instance?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>IAM Roles provide temporary credentials that rotate automatically. Using an IAM User would require placing permanent credentials (access keys) on the server, which is a major security risk if the server is compromised.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="12-kubernetes-core.html" class="cross-link-chip">☸️ Kubernetes</a>
+          <a href="17-terraform.html" class="cross-link-chip">🏗️ Terraform (IaC)</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you understand the cloud infrastructure, the next step is efficiently running your applications on it. We'll explore Kubernetes, the de facto standard for orchestrating containers at scale across these cloud resources.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

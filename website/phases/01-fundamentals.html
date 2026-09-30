@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 01 — DevOps Fundamentals | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <span class="ctx-current-text">Start of Journey</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 01: DevOps Fundamentals</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="02-os-concepts.html" class="ctx-link">Phase 02: OS Concepts</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 01</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">DevOps Fundamentals</h1>
+        <p class="page-subtitle">Understand the culture, practices, and mindset that bridge the gap between software development and IT operations.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Basic understanding of what software development is</li>
+            <li>No prior operational or sysadmin experience required</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>What DevOps actually means beyond the buzzword</li>
+            <li>The software development life cycle (SDLC)</li>
+            <li>The cultural pillars of DevOps</li>
+            <li>High-level overview of Continuous Integration and Deployment (CI/CD)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p><strong>DevOps</strong> is a combination of <em>Development</em> (Dev) and <em>Operations</em> (Ops). It is not a single tool, a specific role, or a piece of software you can buy. Rather, it is a <strong>culture, practice, and mindset</strong> aimed at shortening the systems development life cycle and providing continuous delivery with high software quality.</p>
+          <p>Traditionally, developers wrote code (Dev) and literally "threw it over the wall" to system administrators (Ops) to deploy and maintain. This created conflicting goals: Devs wanted to ship new features quickly, while Ops wanted absolute stability (which usually means changing nothing). DevOps bridges this gap through shared ownership, automation, and continuous feedback.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p><strong>The Wall of Confusion:</strong> Developers and Operations worked in silos. Releases took months, leading to massive, risky deployments. When things broke, a "blame culture" emerged. Developers claimed "it works on my machine," while Ops struggled with undocumented deployment steps.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p><strong>Shared Responsibility:</strong> Teams adopt the mantra "you build it, you run it." Deployments happen multiple times a day using automated pipelines. Failures are treated as learning opportunities via blameless post-mortems. The focus is on fast feedback and continuous improvement.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model (for complex topics) -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of DevOps like a high-performance Formula 1 pit crew. The driver (Dev) and the mechanics (Ops) aren't separate entities working against each other; they are a single team optimizing the car's performance and minimizing pit stop time.</p>
+          <div class="model-chain">
+            <span class="model-item">Developer</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Git (Version Control)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">CI/CD Pipeline (Automation)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Deploy</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Monitor</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">User Feedback</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>DevOps transforms the traditional Software Development Life Cycle (SDLC) by automating and integrating the following phases:</p>
+          <ul>
+            <li><strong>Plan:</strong> Define business value and requirements.</li>
+            <li><strong>Code:</strong> Write software and manage versions (Git).</li>
+            <li><strong>Build:</strong> Compile code and package it into deployable artifacts (e.g., Docker images).</li>
+            <li><strong>Test:</strong> Run automated unit, integration, and security tests.</li>
+            <li><strong>Release:</strong> Approve the artifact for deployment.</li>
+            <li><strong>Deploy:</strong> Automatically push the artifact to production servers or Kubernetes clusters.</li>
+            <li><strong>Operate:</strong> Manage the infrastructure and scaling.</li>
+            <li><strong>Monitor:</strong> Collect logs and metrics to ensure health and gather user feedback.</li>
+          </ul>
+          <p>Crucially, this is driven by <strong>CI/CD</strong>:</p>
+          <ul>
+            <li><strong>Continuous Integration (CI):</strong> Merging all developer working copies to a shared mainline several times a day, automatically running tests on every commit.</li>
+            <li><strong>Continuous Delivery (CD):</strong> Ensuring the software is always in a deployable state. Deployments might still require a manual click.</li>
+            <li><strong>Continuous Deployment (CD):</strong> Every change that passes automated tests is deployed to production automatically.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">THE DEVOPS INFINITY LOOP</div>
+          <div class="flow-h">
+            <div class="flow-node"><div class="flow-box">Plan & Code</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box flow-box-accent">Build & Test</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box">Release & Deploy</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box">Operate & Monitor</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">🔷</div>
+            <div class="concept-card-title">Psychological Safety</div>
+            <div class="concept-card-desc">An environment where team members feel safe to take risks and admit mistakes without fear of punishment.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🔷</div>
+            <div class="concept-card-title">Blameless Post-Mortem</div>
+            <div class="concept-card-desc">Analyzing incidents to find root causes in the system or process, rather than blaming individuals.</div>
+          </div>
+        </div>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>SDLC</td><td>Software Development Life Cycle</td><td>Plan → Code → Build → Test → Deploy</td></tr>
+            <tr><td>CI</td><td>Continuous Integration</td><td>Running unit tests on every Git push</td></tr>
+            <tr><td>CD</td><td>Continuous Delivery/Deployment</td><td>Automatically deploying code to staging/production</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>Throughout this course, we will build and deploy <strong>TaskFlow</strong>, a full-stack application:</p>
+          <ul>
+            <li><strong>Frontend:</strong> React + Vite (Dev port 5173, builds to /dist)</li>
+            <li><strong>Backend:</strong> NestJS on Node.js (Port 3000)</li>
+            <li><strong>Database:</strong> PostgreSQL (Port 5432)</li>
+          </ul>
+          <p>By the end of this journey, whenever you push code to `gitlab.com/yourname/taskflow`, GitLab CI will automatically test it, build Docker containers, and ArgoCD will deploy them to an AWS EKS Kubernetes cluster, monitored by Prometheus and Grafana. This entire automated flow is the embodiment of DevOps!</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># This is a conceptual phase, but you will soon be running commands like:
+git commit -m "feat: add new task feature"
+git push origin main</code></pre>
+          <div class="code-annotation">↑ This single action will trigger the entire automated DevOps pipeline we are going to build.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Thinking DevOps = Just CI/CD Tools</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Understand that tools like Docker and Kubernetes are useless without a culture of communication, shared ownership, and fast feedback.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Hiring a "DevOps Engineer" to solve organizational silos</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> DevOps is a practice everyone in the engineering organization must adopt, from developers to security to QA.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Developers are afraid to deploy to production on Fridays.</span>
+            <span class="ts-cause">Cause: Deployments are manual, error-prone, and lack automated testing safety nets.</span>
+            <span class="ts-fix">Fix: <code>Implement Continuous Delivery</code> with high test coverage and automated rollbacks.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">The Learning Path Assessment</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Review the syllabus of this course.</li>
+            <li>Reflect on why we learn OS fundamentals and Linux <em>before</em> we learn Docker. (Hint: Containers are just isolated Linux processes).</li>
+            <li>Reflect on why we learn Networking <em>before</em> Kubernetes. (Hint: K8s is heavily reliant on advanced networking rules).</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the primary difference between Continuous Delivery and Continuous Deployment?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Continuous Delivery means the code is *ready* to be deployed at any time, but requires a manual approval/click. Continuous Deployment means the code goes to production entirely automatically if tests pass.</p></div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is a "blameless post-mortem" critical to DevOps culture?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>It shifts the focus from punishing individuals (which causes people to hide mistakes) to fixing the systemic issues and processes that allowed the mistake to happen.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="02-os-concepts.html" class="cross-link-chip">🖥️ OS Concepts</a>
+          <a href="10-cicd.html" class="cross-link-chip">🔄 CI/CD pipelines</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you understand the "why" and the culture of DevOps, we need to build our technical foundation. Modern infrastructure runs on Linux, and Linux runs on core Operating System concepts. In the next phase, we'll dive into how a computer actually runs your code.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

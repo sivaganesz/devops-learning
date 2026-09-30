@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Complete DevOps Journey | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sidebar.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/vendor/prism.min.css">
+  <style>
+    .timeline { position: relative; max-width: 800px; margin: 2rem auto; padding: 2rem 0; }
+    .timeline::before { content: ''; position: absolute; top: 0; left: 20px; height: 100%; width: 4px; background: var(--border); }
+    .timeline-item { position: relative; padding-left: 60px; margin-bottom: 2rem; }
+    .timeline-item::before { content: ''; position: absolute; left: 14px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 4px solid var(--bg); }
+    .timeline-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--text); }
+    .timeline-desc { color: var(--text-muted); }
+    .timeline-insight { margin-top: 1rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent); border-radius: 0 4px 4px 0; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <div class="page-header">
+        <h1 class="page-title">The Complete DevOps Journey</h1>
+        <p class="page-subtitle">This page traces one code change through the entire DevOps pipeline — from code commit to user's browser.</p>
+      </div>
+
+      <div class="content-section">
+        <div class="flow-diagram" style="margin-bottom: 3rem;">
+          <div class="flow-diagram-title">PIPELINE OVERVIEW</div>
+          <div class="flow-h">
+            <div class="flow-node"><div class="flow-box">Code</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box">Build</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box">Deploy</div></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><div class="flow-box flow-box-accent">Monitor</div></div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-title">1. Developer writes code locally</div>
+            <div class="timeline-desc">A developer edits the React + NestJS source code to add a new feature to TaskFlow. <a href="phases/03-linux.html">Learn basics</a></div>
+            <div class="timeline-insight"><strong>Key Insight:</strong> Everything starts with code running in a local environment.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">2. git add / git commit / git push</div>
+            <div class="timeline-desc">Changes are staged, committed, and pushed to the remote GitLab repository. <a href="phases/06-git.html">Learn Git</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">3. GitLab detects push, triggers CI pipeline</div>
+            <div class="timeline-desc">The push event is detected by GitLab, initiating the pipeline defined in <code>.gitlab-ci.yml</code>. <a href="phases/10-cicd.html">Learn CI Pipelines</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">4. GitLab Runner picks up the job</div>
+            <div class="timeline-desc">An available GitLab Runner claims the pending job to execute the pipeline instructions.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">5. Install dependencies</div>
+            <div class="timeline-desc">The runner executes <code>npm ci</code> to fetch required node modules.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">6. Run tests</div>
+            <div class="timeline-desc">Automated tests run using <code>jest</code> to ensure the new code doesn't break existing functionality.</div>
+            <div class="timeline-insight"><strong>Key Insight:</strong> Automated testing in CI prevents broken code from reaching production.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">7. Build the application</div>
+            <div class="timeline-desc">The code is compiled (e.g., <code>npm run build</code>, <code>tsc</code>) to generate production-ready artifacts.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">8. Docker build</div>
+            <div class="timeline-desc">A Docker image is created from a <code>Dockerfile</code> packaging the built app and its runtime. <a href="phases/09-docker-advanced.html">Learn Docker Build</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">9. docker tag</div>
+            <div class="timeline-desc">The new image is tagged with a semantic version or a git commit SHA.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">10. docker push</div>
+            <div class="timeline-desc">The tagged image is pushed to the GitLab Container Registry. <a href="phases/09-docker-advanced.html">Learn Registries</a></div>
+            <div class="timeline-insight"><strong>Key Insight:</strong> The container registry acts as the source of truth for all deployable artifacts.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">11. CI updates Helm values.yaml</div>
+            <div class="timeline-desc">A script in the CI pipeline edits the <code>values.yaml</code> of the Helm chart to point to the new image tag. <a href="phases/15-helm.html">Learn Helm</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">12. CI commits and pushes to GitOps repo</div>
+            <div class="timeline-desc">The modified <code>values.yaml</code> is committed and pushed to a separate GitOps configuration repository.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">13. Argo CD detects change</div>
+            <div class="timeline-desc">Argo CD, monitoring the GitOps repo, notices a drift between the repo state and the cluster state. <a href="phases/16-gitops.html">Learn GitOps</a></div>
+            <div class="timeline-insight"><strong>Key Insight:</strong> GitOps separates CI (building images) from CD (applying state to clusters).</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">14. Argo CD syncs</div>
+            <div class="timeline-desc">Argo CD automatically applies the new Helm chart rendering to the Kubernetes cluster.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">15. Kubernetes Scheduler places Pods</div>
+            <div class="timeline-desc">The K8s control plane determines which Worker Node should run the new Pod. <a href="phases/12-kubernetes-core.html">Learn K8s Basics</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">16. kubelet pulls image and starts container</div>
+            <div class="timeline-desc">The kubelet on the assigned node pulls the image from the registry and starts it via the container runtime.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">17. Readiness probe passes</div>
+            <div class="timeline-desc">The container starts accepting traffic and responds 200 OK to the readiness probe. The Pod is marked Ready.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">18. Service routes traffic</div>
+            <div class="timeline-desc">The Kubernetes Service adds the new Pod's IP to its endpoints, enabling internal traffic routing.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">19. Ingress Controller receives request</div>
+            <div class="timeline-desc">An external user navigates to the app. The AWS Load Balancer routes it to the K8s Ingress Controller. <a href="phases/13-kubernetes-networking.html">Learn Networking</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">20. TLS terminated, request forwarded</div>
+            <div class="timeline-desc">The Ingress Controller handles SSL/TLS termination and passes the HTTP request to the Service.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">21. Request reaches Pod</div>
+            <div class="timeline-desc">The Service routes the request to our newly deployed NestJS Pod.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">22. Query PostgreSQL</div>
+            <div class="timeline-desc">NestJS queries the underlying PostgreSQL database for data.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">23. Response sent to browser</div>
+            <div class="timeline-desc">The data flows back through the Service, Ingress, and Load Balancer to the user's browser.</div>
+            <div class="timeline-insight"><strong>Key Insight:</strong> Microservices abstract the complexity so the end-user just experiences a fast website.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">24. Prometheus scrapes metrics</div>
+            <div class="timeline-desc">Prometheus continuously scrapes the `/metrics` endpoint of the new Pod to collect CPU, memory, and HTTP stats. <a href="phases/18-monitoring.html">Learn Prometheus</a></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">25. Grafana displays dashboard</div>
+            <div class="timeline-desc">An engineer views real-time application health on a Grafana dashboard, concluding a successful deployment. <a href="phases/18-monitoring.html">Learn Grafana</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="assets/js/routes.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/vendor/prism.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="assets/vendor/prism-yaml.min.js"></script>
+<script src="assets/vendor/prism-docker.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-nginx.min.js"></script>
+<script src="assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

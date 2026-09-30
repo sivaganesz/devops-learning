@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 21: TaskFlow End-to-End Project | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="20-advanced.html" class="ctx-link">Phase 20: Advanced DevOps</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 21: TaskFlow End-to-End Project</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <span class="ctx-link">Curriculum Complete</span>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 21</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">TaskFlow: End-to-End Project</h1>
+        <p class="page-subtitle">The capstone project. Bringing together every concept from all 20 phases to build a fully production-ready, monitored, GitOps-deployed application.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Completion of Phases 1-20</li>
+            <li>An AWS account and GitLab account</li>
+            <li>Local tooling installed (Docker, kubectl, terraform, helm)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How a complete modern DevOps pipeline fits together</li>
+            <li>Writing IaC, Kubernetes manifests, and CI/CD from scratch</li>
+            <li>GitOps workflows with Argo CD</li>
+            <li>Implementing full observability and security</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> Introduction: The Culmination</h2>
+        <div class="prose">
+          <p>This is where everything comes together. You have learned Linux, Networking, Docker, Terraform, CI/CD, Kubernetes, Monitoring, and Security in isolation. This page is the culmination of the entire curriculum.</p>
+          <p>We are going to take <strong>TaskFlow</strong>—our sample task management application featuring a React+Vite frontend, a NestJS backend, and a PostgreSQL database—from zero to a highly available, monitored, GitOps-deployed application running on an AWS EKS cluster.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Project Goals</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">The Source Code</div>
+            <p>Raw application code sitting on a developer's laptop. Prone to "it works on my machine" syndrome, manual deployment errors, lack of monitoring, and insecure configurations.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">The Production System</div>
+            <p>Infrastructure provisioned via code. Code automatically tested, scanned, and built into immutable container images. Argo CD continuously syncing desired state to the cluster. Dashboards monitoring health.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> The Big Picture</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 The Complete Journey</div>
+          <p class="mental-model-analogy">Think of this as a highly automated factory. The Developer pushes raw materials (code). The CI pipeline is the assembly line that tests, secures, and packages the product (Docker images). The Container Registry is the warehouse. GitOps (Argo CD) is the logistics manager that pulls the product and delivers it to the storefront (Kubernetes), while Monitoring acts as the security cameras and quality assurance team.</p>
+          <div class="model-chain">
+            <span class="model-item">Code Push</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">GitLab CI (Build/Test)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">GitOps Repo Update</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Argo CD Sync</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">EKS Production</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Complete Architecture</h2>
+        <div class="prose">
+          <p><strong>Infrastructure:</strong> AWS VPC with public and private subnets, EKS Cluster in private subnets, ALB for ingress, RDS PostgreSQL for the database.</p>
+          <p><strong>Kubernetes Workloads:</strong> Frontend Pods (Nginx), Backend Pods (NestJS), Ingress Controller, External Secrets Operator, Prometheus & Grafana.</p>
+        </div>
+      </div>
+
+      <!-- Stage 1 - 3: Local Dev to Git -->
+      <div class="content-section">
+        <h2 id="stage1-3" class="section-title"><span class="section-icon">🚀</span> Stages 1-3: Local, Docker, and Git</h2>
+        <div class="prose">
+          <p><strong>Stage 1: Local Development</strong><br>We start by running the app locally. Frontend runs via <code>npm run dev</code> on port 5173. Backend runs via <code>npm run start:dev</code> on port 3000. We spin up a local PostgreSQL instance using: <br><code>docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=dev postgres:15</code></p>
+          
+          <p><strong>Stage 2: Dockerize</strong><br>We create multi-stage Dockerfiles. The frontend uses Node to build the static React assets, then copies them to an Nginx image. The backend compiles TypeScript and runs in a distroless Node environment. A <code>docker-compose.yml</code> file orchestrates the local stack.</p>
+
+          <p><strong>Stage 3: Repository Setup</strong><br>We create two repositories on GitLab: <code>taskflow</code> (the application code) and <code>taskflow-gitops</code> (our Kubernetes manifests/Helm charts). We protect the main branches and require Merge Requests.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration (CI/CD) -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Stage 4: CI/CD Pipeline</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml"># .gitlab-ci.yml
+stages:
+  - test
+  - build
+  - push
+  - update-gitops
+
+variables:
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+test_backend:
+  stage: test
+  image: node:18
+  script:
+    - cd backend && npm install && npm test
+
+build_and_push:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/backend:$IMAGE_TAG ./backend
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE/backend:$IMAGE_TAG
+    # run trivy scan here
+
+update_gitops:
+  stage: update-gitops
+  image: alpine/git
+  script:
+    - git clone https://oauth2:${GITOPS_TOKEN}@gitlab.com/yourname/taskflow-gitops.git
+    - cd taskflow-gitops
+    # Update image tag in values.yaml
+    - sed -i "s/tag: .*/tag: ${IMAGE_TAG}/g" charts/taskflow/values.yaml
+    - git add . && git commit -m "Update image tag to ${IMAGE_TAG}"
+    - git push origin main</code></pre>
+          <div class="code-annotation">↑ The pipeline tests the code, builds the container, pushes to the registry, and crucially, automatically updates the GitOps repository with the new image tag.</div>
+        </div>
+      </div>
+
+      <!-- Stages 5-7: Terraform and K8s -->
+      <div class="content-section">
+        <h2 id="stage5-7" class="section-title"><span class="section-icon">☁️</span> Stages 5-7: AWS, Kubernetes, and Helm</h2>
+        <div class="prose">
+          <p><strong>Stage 5: AWS Infrastructure (Terraform)</strong><br>We write <code>main.tf</code> declaring our VPC, subnets, EKS cluster, and an RDS instance for our production database. After running <code>terraform apply</code>, we connect our local kubectl to the new EKS cluster.</p>
+          
+          <p><strong>Stage 6: Kubernetes Manifests</strong><br>We write Deployments, Services, ConfigMaps, and an HPA. We use an Ingress resource to route <code>/api</code> traffic to the NestJS backend and all other traffic to the React frontend.</p>
+          
+          <p><strong>Stage 7: Helm Chart</strong><br>We convert our raw YAML manifests into a reusable Helm chart located in our <code>taskflow-gitops</code> repo. We create a <code>production-values.yaml</code> file for environment-specific overrides (like resource limits and replica counts).</p>
+        </div>
+      </div>
+
+      <!-- Stage 8: GitOps -->
+      <div class="content-section">
+        <h2 id="stage8" class="section-title"><span class="section-icon">🐙</span> Stage 8: GitOps with Argo CD</h2>
+        <div class="prose">
+          <p>We install Argo CD into the cluster:<br><code>helm install argo-cd argo/argo-cd -n argocd --create-namespace</code></p>
+          <p>We create an Argo CD Application resource that points to our <code>taskflow-gitops</code> repository. From this point forward, NO ONE runs <code>kubectl apply</code> manually. When our CI pipeline pushes a new commit to the GitOps repo (updating the image tag), Argo CD detects the change and automatically syncs the cluster state.</p>
+        </div>
+      </div>
+      
+      <!-- Stages 9-10: Monitoring and Security -->
+      <div class="content-section">
+        <h2 id="stage9-10" class="section-title"><span class="section-icon">🛡️</span> Stages 9-10: Monitoring & Security</h2>
+        <div class="prose">
+          <p><strong>Stage 9: Monitoring</strong><br>We deploy the <code>kube-prometheus-stack</code>. We configure a <code>ServiceMonitor</code> to scrape metrics from the NestJS backend's <code>/metrics</code> endpoint. We build a Grafana dashboard visualizing API request rates and database connection pool health. We set up an alert to notify Slack if P99 latency exceeds 2 seconds.</p>
+          
+          <p><strong>Stage 10: Security Hardening</strong><br>We apply Pod Security Standards (Restricted). We set up External Secrets Operator to sync the RDS database password from AWS Secrets Manager directly into Kubernetes. We install <code>cert-manager</code> for automatic Let's Encrypt TLS certificates.</p>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes in the Pipeline</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Modifying resources via kubectl while using Argo CD.</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Argo CD will detect the manual change as "OutOfSync" and (if auto-heal is on) immediately overwrite your manual change with what is in Git. All changes MUST go through Git.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting the Pipeline</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Pipeline fails at "update-gitops" stage.</span>
+            <span class="ts-cause">Cause: The pipeline does not have permission to push to the taskflow-gitops repository.</span>
+            <span class="ts-fix">Fix: Ensure you generated a Project Access Token in the GitOps repo and added it as a masked CI/CD variable (`GITOPS_TOKEN`) in the application repo.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏁</span> The Final Diagram</h2>
+        <div class="prose">
+          <p>When a developer pushes code to <code>main</code> at T+0:</p>
+          <ul>
+            <li><strong>T+0:05</strong>: GitLab CI starts running tests.</li>
+            <li><strong>T+2:00</strong>: Docker image built, Trivy scan passes, image pushed to registry.</li>
+            <li><strong>T+2:05</strong>: CI updates <code>values.yaml</code> in the GitOps repo.</li>
+            <li><strong>T+2:10</strong>: Argo CD detects the Git commit.</li>
+            <li><strong>T+2:30</strong>: Kubernetes begins a RollingUpdate with zero downtime.</li>
+            <li><strong>T+3:00</strong>: Old pods terminate, new pods are fully serving traffic. Prometheus confirms error rate is 0%.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Final Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why do we use two separate repositories (application code and gitops config)?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer">
+              <p>Separating them provides cleaner access control, prevents CI loop feedback issues, allows infrastructure state to be versioned independently of code, and makes it easier for multiple microservices to deploy to a single cluster environment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🎓</span> Congratulations!</h2>
+        <div class="prose">
+          <p><strong>You have completed the DevOps Mastery curriculum.</strong></p>
+          <p>You now understand the complete journey from raw code on a laptop to a resilient, secure, automated production environment.</p>
+          <h3>What to learn next?</h3>
+          <ul>
+            <li><strong>Certifications:</strong> Consider taking the CKA (Certified Kubernetes Administrator) or AWS Solutions Architect Associate exams.</li>
+            <li><strong>Homelab:</strong> Build a Raspberry Pi cluster or set up Proxmox to practice self-hosting and infrastructure management physically.</li>
+            <li><strong>Open Source:</strong> Contribute to CNCF projects or other open-source tools to gain real-world collaborative experience.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 Journey Complete</div>
+        <p>Thank you for following along with DevOps Mastery. Keep building, keep automating, and never stop learning.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <!-- RIGHT TOC -->
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+</body>
+</html>

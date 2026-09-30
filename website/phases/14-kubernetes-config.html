@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 14 — Kubernetes Config & Operations | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="13-kubernetes-networking.html" class="ctx-link">Phase 13: Kubernetes Networking</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 14: Kubernetes Config</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="15-helm.html" class="ctx-link">Phase 15: Helm</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 14</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Kubernetes Config & Operations</h1>
+        <p class="page-subtitle">Injecting configuration securely, managing persistent state, setting resource limits, and auto-scaling workloads in production.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="12-kubernetes-core.html">Phase 12: Kubernetes Core</a></li>
+            <li><a href="13-kubernetes-networking.html">Phase 13: Kubernetes Networking</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>Managing environment variables with ConfigMaps and Secrets.</li>
+            <li>Using Persistent Volumes (PV) and Claims (PVC) for databases.</li>
+            <li>Ensuring application health with Liveness and Readiness probes.</li>
+            <li>Managing application lifecycles, HPA, and Resource requests/limits.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Deploying stateless containers is easy, but real applications need injected configuration, sensitive secrets, stateful database storage, and operational guarantees. K8s Config and Operations encompass the resources (ConfigMaps, PVs, HPAs) that make your applications robust, state-aware, and highly available.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>You bake configuration files into your Docker images, meaning you have to rebuild images for every environment (dev/prod). Database containers lose all data if they restart. Heavy traffic crashes your single container.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>You inject settings dynamically via ConfigMaps. Databases write to Persistent Volumes that survive pod deletion. Horizontal Pod Autoscalers dynamically add replicas when CPU usage spikes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of the Container as an empty video game console. ConfigMaps/Secrets are the game cartridges you plug in. Persistent Volumes are the memory cards saving your progress. Probes are the heartbeat monitor checking if the console froze.</p>
+          <div class="model-chain">
+            <span class="model-item">ConfigMap</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Pod Spec</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">PVC</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">PV / EBS Volume</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p><strong>ConfigMaps & Secrets:</strong> You create these objects in the API server. Pods reference them in their YAML, and Kubelet dynamically mounts them into the container as either environment variables or files on the filesystem.</p>
+          <p><strong>Storage:</strong> A Pod requests storage via a PersistentVolumeClaim (PVC). Kubernetes matches it with an available PersistentVolume (PV) or uses a StorageClass to dynamically provision cloud storage (like AWS EBS).</p>
+          <p><strong>Probes & Limits:</strong> <em>Requests</em> guarantee baseline CPU/RAM; <em>Limits</em> enforce a hard ceiling to prevent resource hogging. <em>Liveness probes</em> reboot deadlocked apps, while <em>Readiness probes</em> stop traffic to booting apps.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">HPA SCALING WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Metrics Server</div>
+              <div class="flow-label">Reads CPU %</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">HPA Controller</div>
+              <div class="flow-label">Checks Target</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Deployment</div>
+              <div class="flow-label">Updates Replicas</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Pods Added</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">🗂️</div>
+            <div class="concept-card-title">ConfigMap & Secret</div>
+            <div class="concept-card-desc">Decouples configuration from images. Secrets are base64 encoded. Neither are encrypted at rest by default without add-ons.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">💾</div>
+            <div class="concept-card-title">PV & PVC</div>
+            <div class="concept-card-desc">PV is the actual storage piece; PVC is a ticket requesting storage size/access mode for a Pod.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🩺</div>
+            <div class="concept-card-title">Probes</div>
+            <div class="concept-card-desc">Liveness (kill and restart), Readiness (add/remove from Service endpoints), Startup (delay other checks).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>In TaskFlow, the NestJS backend uses a ConfigMap for `LOG_LEVEL` and a Secret for `DATABASE_URL` and `JWT_SECRET`. The PostgreSQL StatefulSet uses a PVC to request a 10Gi AWS EBS volume to store the database files persistently. We configure an HPA to auto-scale the backend Deployment from 2 to 10 replicas if CPU exceeds 70%.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml"># taskflow-deployment-probes.yaml snippet
+spec:
+  containers:
+  - name: backend
+    image: my-backend:v1
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    envFrom:
+    - configMapRef:
+        name: backend-config
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 3000
+      initialDelaySeconds: 15
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 3000
+      periodSeconds: 5</code></pre>
+          <div class="code-annotation">↑ Configuring requests/limits, envFrom for ConfigMaps, and HTTP probes.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Committing raw Secrets to Git</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Use tools like Sealed Secrets or External Secrets Operator (integrating with AWS Secrets Manager/Vault) to inject secrets safely.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Forgetting Resource Requests/Limits</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> A pod without limits can consume all node CPU/RAM, crashing other workloads. Always set requests and limits.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Pod is OOMKilled</span>
+            <span class="ts-cause">Cause: The container exceeded its memory `limit`.</span>
+            <span class="ts-fix">Fix: Profile the application for memory leaks or increase the memory limit in the Deployment YAML.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: PVC stuck in Pending state</span>
+            <span class="ts-cause">Cause: K8s cannot provision the volume, often due to a missing/default StorageClass.</span>
+            <span class="ts-fix">Fix: Ensure the cloud-controller-manager is working and the StorageClass exists (`kubectl get sc`).</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Create a ConfigMap</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Run `kubectl create configmap app-settings --from-literal=theme=dark`.</li>
+            <li>Create a Pod YAML that injects `theme` as an env var.</li>
+            <li>Apply the Pod, then run `kubectl exec <pod> -- env | grep theme` to verify.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between a Liveness and Readiness probe?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Liveness probe determines if the container needs to be forcefully restarted. Readiness probe determines if the container is currently able to accept traffic (if it fails, the Pod is removed from Service routing, but not killed).</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="15-helm.html" class="cross-link-chip">📦 Helm</a>
+          <a href="18-monitoring.html" class="cross-link-chip">📊 Monitoring</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Writing all this YAML by hand gets tedious and error-prone. In the next phase, we introduce Helm, the package manager for Kubernetes, which allows us to template and version our Kubernetes manifests.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

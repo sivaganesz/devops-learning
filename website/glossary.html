@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glossary | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sidebar.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/vendor/prism.min.css">
+  <style>
+    .glossary-index { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .glossary-letter-btn { padding: 0.5rem 1rem; background: var(--bg-alt); border: 1px solid var(--border); border-radius: 4px; color: var(--text); text-decoration: none; }
+    .glossary-letter-btn:hover { background: var(--accent); color: white; }
+    .glossary-section { margin-bottom: 3rem; }
+    .glossary-letter-heading { font-size: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--accent); }
+    .glossary-entry { margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-alt); border-radius: 8px; border-left: 4px solid var(--accent); }
+    .glossary-term { font-family: monospace; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; display: block; }
+    .glossary-def { margin-bottom: 0.5rem; }
+    .glossary-phase-link { font-size: 0.9rem; color: var(--accent); text-decoration: none; }
+    .glossary-phase-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <div class="page-header">
+        <h1 class="page-title">DevOps Glossary</h1>
+        <p class="page-subtitle">A comprehensive A-Z reference of essential DevOps terminology and concepts.</p>
+        <p>Use this glossary as a quick reference while navigating through the course. Click on the phase links to jump directly to the detailed lesson covering the concept.</p>
+      </div>
+
+      <div class="content-section">
+        <div class="glossary-index">
+          <a href="#A" class="glossary-letter-btn">A</a>
+          <a href="#B" class="glossary-letter-btn">B</a>
+          <a href="#C" class="glossary-letter-btn">C</a>
+          <a href="#D" class="glossary-letter-btn">D</a>
+          <a href="#E" class="glossary-letter-btn">E</a>
+          <a href="#F" class="glossary-letter-btn">F</a>
+          <a href="#G" class="glossary-letter-btn">G</a>
+          <a href="#H" class="glossary-letter-btn">H</a>
+          <a href="#I" class="glossary-letter-btn">I</a>
+          <a href="#J" class="glossary-letter-btn">J</a>
+          <a href="#K" class="glossary-letter-btn">K</a>
+          <a href="#L" class="glossary-letter-btn">L</a>
+          <a href="#M" class="glossary-letter-btn">M</a>
+          <a href="#N" class="glossary-letter-btn">N</a>
+          <a href="#O" class="glossary-letter-btn">O</a>
+          <a href="#P" class="glossary-letter-btn">P</a>
+          <a href="#R" class="glossary-letter-btn">R</a>
+          <a href="#S" class="glossary-letter-btn">S</a>
+          <a href="#T" class="glossary-letter-btn">T</a>
+          <a href="#V" class="glossary-letter-btn">V</a>
+          <a href="#W" class="glossary-letter-btn">W</a>
+        </div>
+
+        <div id="A" class="glossary-section">
+          <h2 class="glossary-letter-heading">A</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">API Server</span>
+            <div class="glossary-def">The central control plane component of Kubernetes that exposes the Kubernetes API. It is the front end for the Kubernetes control plane.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Argo CD</span>
+            <div class="glossary-def">A declarative, GitOps continuous delivery tool for Kubernetes that automatically syncs the cluster state to match the state defined in a Git repository.</div>
+            <a href="phases/16-gitops.html" class="glossary-phase-link">Learn in Phase 14: GitOps with Argo CD →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Artifact</span>
+            <div class="glossary-def">A byproduct of the CI process, such as compiled binaries, tarballs, or test reports, which can be stored and used in later stages.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Auto-sync</span>
+            <div class="glossary-def">A feature in GitOps tools like Argo CD that automatically applies changes pushed to the Git repository to the target Kubernetes cluster.</div>
+            <a href="phases/16-gitops.html" class="glossary-phase-link">Learn in Phase 14: GitOps with Argo CD →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Availability Zone (AZ)</span>
+            <div class="glossary-def">Distinct locations within a cloud provider's region that are engineered to be isolated from failures in other zones.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+        </div>
+
+        <div id="B" class="glossary-section">
+          <h2 class="glossary-letter-heading">B</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Bash</span>
+            <div class="glossary-def">The Bourne Again SHell, a command processor that typically runs in a text window where the user types commands that cause actions.</div>
+            <a href="phases/03-linux.html" class="glossary-phase-link">Learn in Phase 01: Linux Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Blob (Git)</span>
+            <div class="glossary-def">The object type in Git used to store the contents of a file.</div>
+            <a href="phases/06-git.html" class="glossary-phase-link">Learn in Phase 06: Git Version Control →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Branch</span>
+            <div class="glossary-def">An independent line of development in Git, allowing you to work on features isolated from other developers.</div>
+            <a href="phases/06-git.html" class="glossary-phase-link">Learn in Phase 06: Git Version Control →</a>
+          </div>
+        </div>
+
+        <div id="C" class="glossary-section">
+          <h2 class="glossary-letter-heading">C</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">CIDR</span>
+            <div class="glossary-def">Classless Inter-Domain Routing, a method for allocating IP addresses and IP routing.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">CI/CD</span>
+            <div class="glossary-def">Continuous Integration and Continuous Deployment/Delivery. The practice of automating the building, testing, and deployment of software.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">ClusterIP</span>
+            <div class="glossary-def">The default Kubernetes Service type that exposes a service on a cluster-internal IP, making it only reachable from within the cluster.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">CMD (Dockerfile)</span>
+            <div class="glossary-def">The Dockerfile instruction that provides defaults for an executing container.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">ConfigMap</span>
+            <div class="glossary-def">An API object in Kubernetes used to store non-confidential data in key-value pairs, which can be consumed as environment variables or config files by Pods.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Container</span>
+            <div class="glossary-def">A lightweight, standalone, executable package of software that includes everything needed to run an application.</div>
+            <a href="phases/08-docker-core.html" class="glossary-phase-link">Learn in Phase 03: Docker Fundamentals →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Control Plane</span>
+            <div class="glossary-def">The part of the Kubernetes cluster that manages the worker nodes and the Pods in the cluster. Includes the API server, scheduler, and controller manager.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">cron</span>
+            <div class="glossary-def">A time-based job scheduler in Unix-like operating systems.</div>
+            <a href="phases/03-linux.html" class="glossary-phase-link">Learn in Phase 02: Linux Processes →</a>
+          </div>
+        </div>
+
+        <div id="D" class="glossary-section">
+          <h2 class="glossary-letter-heading">D</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Deployment</span>
+            <div class="glossary-def">A Kubernetes API object that manages a replicated application, providing declarative updates to Pods and ReplicaSets.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Desired State</span>
+            <div class="glossary-def">The state you specify for a system (like in Kubernetes or Terraform), which the system will continually try to achieve and maintain.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Distroless</span>
+            <div class="glossary-def">Docker images that contain only your application and its runtime dependencies, lacking package managers, shells, or other typical OS programs.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Docker</span>
+            <div class="glossary-def">A platform designed to help developers build, share, and run modern applications using containers.</div>
+            <a href="phases/08-docker-core.html" class="glossary-phase-link">Learn in Phase 03: Docker Fundamentals →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Docker Compose</span>
+            <div class="glossary-def">A tool for defining and running multi-container Docker applications using a YAML file.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 05: Docker Compose →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Dockerfile</span>
+            <div class="glossary-def">A text document containing all the commands a user could call on the command line to assemble a Docker image.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Drift</span>
+            <div class="glossary-def">The divergence between the actual state of infrastructure and the expected/desired state defined in code (e.g., in Terraform or GitOps).</div>
+            <a href="phases/16-gitops.html" class="glossary-phase-link">Learn in Phase 14: GitOps with Argo CD →</a>
+          </div>
+        </div>
+
+        <div id="E" class="glossary-section">
+          <h2 class="glossary-letter-heading">E</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">EC2</span>
+            <div class="glossary-def">Amazon Elastic Compute Cloud, a web service that provides secure, resizable compute capacity in the cloud.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">ENTRYPOINT</span>
+            <div class="glossary-def">A Dockerfile instruction that configures a container that will run as an executable.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Environment Variable</span>
+            <div class="glossary-def">A dynamic-named value that can affect the way running processes will behave on a computer.</div>
+            <a href="phases/03-linux.html" class="glossary-phase-link">Learn in Phase 01: Linux Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">etcd</span>
+            <div class="glossary-def">A consistent and highly-available key value store used as Kubernetes' backing store for all cluster data.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Executor</span>
+            <div class="glossary-def">The environment (like a Docker container or shell) where a GitLab Runner executes the CI/CD job.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+        </div>
+
+        <div id="F" class="glossary-section">
+          <h2 class="glossary-letter-heading">F</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">FROM instruction</span>
+            <div class="glossary-def">The first instruction in a valid Dockerfile, initializing a new build stage and setting the Base Image.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+        </div>
+
+        <div id="G" class="glossary-section">
+          <h2 class="glossary-letter-heading">G</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Git</span>
+            <div class="glossary-def">A free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.</div>
+            <a href="phases/06-git.html" class="glossary-phase-link">Learn in Phase 06: Git Version Control →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">GitOps</span>
+            <div class="glossary-def">An operational framework that takes DevOps best practices used for application development such as version control, collaboration, compliance, and CI/CD, and applies them to infrastructure automation.</div>
+            <a href="phases/16-gitops.html" class="glossary-phase-link">Learn in Phase 14: GitOps with Argo CD →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Grafana</span>
+            <div class="glossary-def">An open source analytics and interactive visualization web application that provides charts, graphs, and alerts for the web when connected to supported data sources like Prometheus.</div>
+            <a href="phases/18-monitoring.html" class="glossary-phase-link">Learn in Phase 17: Grafana Dashboards →</a>
+          </div>
+        </div>
+
+        <div id="H" class="glossary-section">
+          <h2 class="glossary-letter-heading">H</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">HPA (Horizontal Pod Autoscaler)</span>
+            <div class="glossary-def">A Kubernetes feature that automatically updates a workload resource (such as a Deployment), with the aim of automatically scaling the workload to match demand.</div>
+            <a href="phases/20-advanced.html" class="glossary-phase-link">Learn in Phase 20: Scaling & Performance →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Helm</span>
+            <div class="glossary-def">The package manager for Kubernetes, helping to manage Kubernetes applications.</div>
+            <a href="phases/15-helm.html" class="glossary-phase-link">Learn in Phase 12: Helm Package Manager →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Helm Chart</span>
+            <div class="glossary-def">A collection of files that describe a related set of Kubernetes resources, packaged by Helm.</div>
+            <a href="phases/15-helm.html" class="glossary-phase-link">Learn in Phase 12: Helm Package Manager →</a>
+          </div>
+        </div>
+
+        <div id="I" class="glossary-section">
+          <h2 class="glossary-letter-heading">I</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">IAM</span>
+            <div class="glossary-def">Identity and Access Management, a framework of policies and technologies for ensuring that the right users have the appropriate access to technology resources.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Image</span>
+            <div class="glossary-def">A read-only template with instructions for creating a Docker container.</div>
+            <a href="phases/08-docker-core.html" class="glossary-phase-link">Learn in Phase 03: Docker Fundamentals →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Image Layer</span>
+            <div class="glossary-def">Modifications to an image, represented as stacked read-only filesystems. Every instruction in a Dockerfile creates a layer.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 04: Building Docker Images →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Ingress</span>
+            <div class="glossary-def">An API object that manages external access to the services in a cluster, typically HTTP/HTTPS.</div>
+            <a href="phases/13-kubernetes-networking.html" class="glossary-phase-link">Learn in Phase 11: Kubernetes Networking →</a>
+          </div>
+        </div>
+
+        <div id="J" class="glossary-section">
+          <h2 class="glossary-letter-heading">J</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Job (CI)</span>
+            <div class="glossary-def">A single set of instructions to be executed in a CI/CD pipeline, such as running tests or building code.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+        </div>
+
+        <div id="K" class="glossary-section">
+          <h2 class="glossary-letter-heading">K</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Kubernetes</span>
+            <div class="glossary-def">An open-source container-orchestration system for automating computer application deployment, scaling, and management.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">kubelet</span>
+            <div class="glossary-def">An agent that runs on each node in the cluster, making sure that containers are running in a Pod.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">kubectl</span>
+            <div class="glossary-def">The Kubernetes command-line tool, allowing you to run commands against Kubernetes clusters.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+        </div>
+
+        <div id="L" class="glossary-section">
+          <h2 class="glossary-letter-heading">L</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Liveness Probe</span>
+            <div class="glossary-def">A diagnostic performed periodically by the kubelet on a Container to determine if it is running correctly. If it fails, the container is killed and restarted.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Load Balancer</span>
+            <div class="glossary-def">A device or service that acts as a reverse proxy and distributes network or application traffic across a number of servers or Pods.</div>
+            <a href="phases/13-kubernetes-networking.html" class="glossary-phase-link">Learn in Phase 11: Kubernetes Networking →</a>
+          </div>
+        </div>
+
+        <div id="N" class="glossary-section">
+          <h2 class="glossary-letter-heading">N</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Namespace</span>
+            <div class="glossary-def">A mechanism to isolate groups of resources within a single Kubernetes cluster.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">NAT Gateway</span>
+            <div class="glossary-def">Network Address Translation Gateway, allowing instances in a private subnet to connect to services outside your VPC but external services cannot initiate a connection with those instances.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Node</span>
+            <div class="glossary-def">A worker machine in Kubernetes, which may be a virtual or physical machine, depending on the cluster.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">NodePort</span>
+            <div class="glossary-def">A type of Kubernetes Service that exposes the Service on each Node's IP at a static port.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+        </div>
+
+        <div id="P" class="glossary-section">
+          <h2 class="glossary-letter-heading">P</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">PersistentVolume (PV)</span>
+            <div class="glossary-def">A piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes.</div>
+            <a href="phases/14-kubernetes-config.html" class="glossary-phase-link">Learn in Phase 10: Kubernetes Storage →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">PersistentVolumeClaim (PVC)</span>
+            <div class="glossary-def">A request for storage by a user, which can request specific size and access modes.</div>
+            <a href="phases/14-kubernetes-config.html" class="glossary-phase-link">Learn in Phase 10: Kubernetes Storage →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Pipeline</span>
+            <div class="glossary-def">A set of automated processes that allow developers and DevOps professionals to reliably and efficiently compile, build, and deploy their code.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Pod</span>
+            <div class="glossary-def">The smallest and simplest Kubernetes object. A Pod represents a set of running containers on your cluster.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Prometheus</span>
+            <div class="glossary-def">An open-source systems monitoring and alerting toolkit originally built at SoundCloud.</div>
+            <a href="phases/18-monitoring.html" class="glossary-phase-link">Learn in Phase 16: Prometheus Monitoring →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">PromQL</span>
+            <div class="glossary-def">Prometheus Query Language, used to select and aggregate time series data in Prometheus.</div>
+            <a href="phases/18-monitoring.html" class="glossary-phase-link">Learn in Phase 16: Prometheus Monitoring →</a>
+          </div>
+        </div>
+
+        <div id="R" class="glossary-section">
+          <h2 class="glossary-letter-heading">R</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Readiness Probe</span>
+            <div class="glossary-def">A probe to determine whether a container is ready to respond to requests.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Reconciliation</span>
+            <div class="glossary-def">The process by which controllers watch the state of your cluster, and make or request changes where needed to move the current state towards the desired state.</div>
+            <a href="phases/16-gitops.html" class="glossary-phase-link">Learn in Phase 14: GitOps with Argo CD →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Registry</span>
+            <div class="glossary-def">A storage and content delivery system, holding named Docker images, available in different tagged versions.</div>
+            <a href="phases/09-docker-advanced.html" class="glossary-phase-link">Learn in Phase 08: Container Registries →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Release (Helm)</span>
+            <div class="glossary-def">An instance of a chart running in a Kubernetes cluster.</div>
+            <a href="phases/15-helm.html" class="glossary-phase-link">Learn in Phase 12: Helm Package Manager →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">ReplicaSet</span>
+            <div class="glossary-def">A Kubernetes object whose purpose is to maintain a stable set of replica Pods running at any given time.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Runner (GitLab)</span>
+            <div class="glossary-def">An application that works with GitLab CI/CD to run jobs in a pipeline.</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+        </div>
+
+        <div id="S" class="glossary-section">
+          <h2 class="glossary-letter-heading">S</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Secret</span>
+            <div class="glossary-def">An object that contains a small amount of sensitive data such as a password, a token, or a key in Kubernetes.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Service (K8s)</span>
+            <div class="glossary-def">An abstract way to expose an application running on a set of Pods as a network service.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">SIGTERM</span>
+            <div class="glossary-def">A signal sent to a process to request its termination, allowing the process to clean up and exit gracefully.</div>
+            <a href="phases/03-linux.html" class="glossary-phase-link">Learn in Phase 02: Linux Processes →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Stage (CI)</span>
+            <div class="glossary-def">A logical grouping of jobs in a CI/CD pipeline (e.g., build, test, deploy).</div>
+            <a href="phases/10-cicd.html" class="glossary-phase-link">Learn in Phase 07: CI/CD Pipelines →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">StorageClass</span>
+            <div class="glossary-def">A way for administrators to describe the "classes" of storage they offer, dynamically provisioning storage on request.</div>
+            <a href="phases/14-kubernetes-config.html" class="glossary-phase-link">Learn in Phase 10: Kubernetes Storage →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Subnet</span>
+            <div class="glossary-def">A logical subdivision of an IP network.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Systemd</span>
+            <div class="glossary-def">A suite of basic building blocks for a Linux system, notably providing a system and service manager that runs as PID 1 and starts the rest of the system.</div>
+            <a href="phases/03-linux.html" class="glossary-phase-link">Learn in Phase 02: Linux Processes →</a>
+          </div>
+        </div>
+
+        <div id="T" class="glossary-section">
+          <h2 class="glossary-letter-heading">T</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Terraform</span>
+            <div class="glossary-def">An infrastructure as code tool that allows you to build, change, and version infrastructure safely and efficiently.</div>
+            <a href="phases/17-terraform.html" class="glossary-phase-link">Learn in Phase 13: Infrastructure as Code →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">TLS</span>
+            <div class="glossary-def">Transport Layer Security, a cryptographic protocol designed to provide communications security over a computer network.</div>
+            <a href="phases/13-kubernetes-networking.html" class="glossary-phase-link">Learn in Phase 11: Kubernetes Networking →</a>
+          </div>
+        </div>
+
+        <div id="V" class="glossary-section">
+          <h2 class="glossary-letter-heading">V</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">VPC</span>
+            <div class="glossary-def">Virtual Private Cloud, a secure, isolated private cloud hosted within a public cloud, such as AWS.</div>
+            <a href="phases/11-cloud.html" class="glossary-phase-link">Learn in Phase 15: AWS EKS & Cloud Services →</a>
+          </div>
+          <div class="glossary-entry">
+            <span class="glossary-term">Volume (Docker)</span>
+            <div class="glossary-def">The preferred mechanism for persisting data generated by and used by Docker containers.</div>
+            <a href="phases/08-docker-core.html" class="glossary-phase-link">Learn in Phase 03: Docker Fundamentals →</a>
+          </div>
+        </div>
+
+        <div id="W" class="glossary-section">
+          <h2 class="glossary-letter-heading">W</h2>
+          <div class="glossary-entry">
+            <span class="glossary-term">Worker Node</span>
+            <div class="glossary-def">A node in a Kubernetes cluster where containerized applications (Pods) are scheduled and run.</div>
+            <a href="phases/12-kubernetes-core.html" class="glossary-phase-link">Learn in Phase 09: Kubernetes Basics →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="assets/js/routes.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/vendor/prism.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="assets/vendor/prism-yaml.min.js"></script>
+<script src="assets/vendor/prism-docker.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-nginx.min.js"></script>
+<script src="assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sidebar.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <div class="page-header">
+        <h1 class="page-title">Search</h1>
+        <p class="page-subtitle">Search for any DevOps concept, tool, command, or technology</p>
+      </div>
+
+      <div class="content-section">
+        <div class="search-box-wrapper" style="margin-bottom: 2rem;">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search DevOps Mastery..." style="width: 100%; padding: 1rem; font-size: 1.2rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-alt); color: var(--text);">
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <span style="font-weight: bold; margin-right: 1rem;">Popular Searches:</span>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='Docker'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">Docker</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='kubectl'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">kubectl</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='Kubernetes'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">Kubernetes</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='CI/CD'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">CI/CD</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='Pipeline'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">Pipeline</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='Prometheus'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">Prometheus</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='Terraform'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">Terraform</a>
+          <a href="#" class="cross-link-chip" onclick="document.getElementById('searchInput').value='GitOps'; document.getElementById('searchInput').dispatchEvent(new Event('input')); return false;">GitOps</a>
+        </div>
+
+        <h3 id="resultsCount">0 Results Found</h3>
+        <div id="searchResults" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+          <!-- Search results will be injected here by JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="assets/js/routes.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/search-engine.js"></script>
+<script src="assets/vendor/prism.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="assets/vendor/prism-yaml.min.js"></script>
+<script src="assets/vendor/prism-docker.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-nginx.min.js"></script>
+<script src="assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

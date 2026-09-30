@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 13 — Kubernetes Networking | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="12-kubernetes-core.html" class="ctx-link">Phase 12: Kubernetes Core</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 13: Kubernetes Networking</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="14-kubernetes-config.html" class="ctx-link">Phase 14: Kubernetes Config</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 13</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Kubernetes Networking</h1>
+        <p class="page-subtitle">Understand Services, CoreDNS, Ingress Controllers, and Network Policies to connect and secure your Pods.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="12-kubernetes-core.html">Phase 12: Kubernetes Core</a></li>
+            <li><a href="03-linux.html">Phase 2: Linux Basics (Networking)</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How Services provide stable IPs and DNS for ephemeral Pods.</li>
+            <li>Different Service types: ClusterIP, NodePort, LoadBalancer.</li>
+            <li>How to expose HTTP apps externally using Ingress and TLS.</li>
+            <li>Securing pod communication with Network Policies.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Kubernetes networking is the system that allows all components inside and outside the cluster to communicate. Since Pods are ephemeral and constantly destroyed/recreated, relying on their IP addresses is impossible. K8s introduces abstractions like <strong>Services</strong> and <strong>Ingress</strong> to provide stable routing.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>You deployed 3 backend Pods. A frontend wants to talk to them. You try to hardcode their IP addresses. When a Pod dies and gets rescheduled, it gets a new IP, breaking your frontend connection.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>You place a K8s Service in front of the backend Pods. The Service gets a stable, unchanging IP and DNS name. The frontend talks to `backend-service`, which load-balances seamlessly to the current healthy Pods.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of an Ingress as a hotel receptionist who checks your destination and routes you to the right floor (Service). The Service is the floor manager, directing you to an available open room (Pod).</p>
+          <div class="model-chain">
+            <span class="model-item">User</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Ingress</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Service</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Endpoints</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Pod</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>A <strong>Service</strong> gets a stable IP (ClusterIP). It uses label selectors to find target Pods and updates a corresponding <em>Endpoints</em> object. `kube-proxy` writes iptables rules on every node to intercept traffic to the ClusterIP and forward it to a Pod.</p>
+          <p><strong>CoreDNS</strong> runs inside the cluster and maps Service names to their ClusterIPs. Format: `&lt;svc-name&gt;.&lt;namespace&gt;.svc.cluster.local`.</p>
+          <p><strong>Ingress</strong> provides a single entry point (usually port 80/443) that inspects HTTP host headers or paths to route traffic to various internal Services.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">EXTERNAL TRAFFIC FLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">AWS ALB</div>
+              <div class="flow-label">Cloud LB</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Nginx Ingress</div>
+              <div class="flow-label">Path Routing</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">API Service</div>
+              <div class="flow-label">ClusterIP</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Backend Pod</div>
+              <div class="flow-label">Container:3000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>ClusterIP</td><td>Default Service type, reachable only within the cluster.</td><td>Internal DB access.</td></tr>
+            <tr><td>NodePort</td><td>Exposes Service on a static port on every Node's IP.</td><td>Local dev / bare metal.</td></tr>
+            <tr><td>LoadBalancer</td><td>Provisions an external cloud LB targeting the Service.</td><td>AWS ELB provisioning.</td></tr>
+            <tr><td>Ingress</td><td>HTTP/HTTPS router based on paths or domain names.</td><td>api.app.com routes to backend.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>For TaskFlow: The PostgreSQL database has a `ClusterIP` Service because only internal apps need it. The NestJS backend has a `ClusterIP` Service. We use an `Ingress` resource configured with an Nginx Controller to accept external traffic on `api.taskflow.com` and route it to the backend Service. We also enforce a Network Policy so ONLY the backend pods can communicate with the PostgreSQL pods.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml"># service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-backend-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: taskflow-backend
+  ports:
+    - port: 80
+      targetPort: 3000</code></pre>
+          <div class="code-annotation">↑ Maps cluster-internal port 80 to container port 3000 on Pods matching `app: taskflow-backend`.</div>
+        </div>
+
+        <div class="code-block-wrapper" style="margin-top: 1rem;">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml"># ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: taskflow-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: api.taskflow.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: taskflow-backend-svc
+            port:
+              number: 80</code></pre>
+          <div class="code-annotation">↑ Routes external traffic from api.taskflow.com to the backend service.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Using a LoadBalancer Service for everything</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> This is expensive as it provisions a new cloud LB for every service. Use an Ingress Controller (one LoadBalancer) and route traffic via Ingress resources.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Service is not routing traffic to Pods</span>
+            <span class="ts-cause">Cause: Service selector labels do not match the Pod labels.</span>
+            <span class="ts-fix">Fix: Check `kubectl get endpoints <service-name>`. If empty, fix the labels.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Ingress returns 502 Bad Gateway</span>
+            <span class="ts-cause">Cause: The backend Service is reachable but the Pod application isn't running or listening on the wrong port.</span>
+            <span class="ts-fix">Fix: Verify container port matches `targetPort` and application is ready.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Exposing an app locally</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Deploy the nginx deployment from Phase 12.</li>
+            <li>Run `kubectl expose deployment nginx-deployment --type=NodePort --port=80`.</li>
+            <li>Run `kubectl get svc nginx-deployment` and note the mapped 30000+ port.</li>
+            <li>Access it via `minikube ip` or `localhost` and that port in your browser.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why should you use an Ingress rather than multiple LoadBalancer services?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Ingress consolidates your routing rules behind a single cloud Load Balancer and external IP, which significantly reduces cloud costs and provides a unified entry point for TLS termination and path-based routing.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="12-kubernetes-core.html" class="cross-link-chip">☸️ K8s Core</a>
+          <a href="11-cloud.html" class="cross-link-chip">☁️ AWS ALB</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>You can deploy apps and route traffic to them, but where do you store configurations, passwords, and persistent data? Next, we'll dive into K8s ConfigMaps, Secrets, and Persistent Volumes.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

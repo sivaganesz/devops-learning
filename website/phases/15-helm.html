@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 15: Helm | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="14-kubernetes-config.html" class="ctx-link">Phase 14: Kubernetes Configuration</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 15: Helm</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="16-gitops.html" class="ctx-link">Phase 16: GitOps & Argo CD</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 15</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Helm</h1>
+        <p class="page-subtitle">Learn how to package, configure, and deploy Kubernetes applications efficiently with the Kubernetes package manager.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="12-kubernetes-core.html">Phase 13: Kubernetes Core</a></li>
+            <li><a href="14-kubernetes-config.html">Phase 14: Kubernetes Configuration</a> (ConfigMaps, Secrets)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How to package Kubernetes manifests into a Helm Chart</li>
+            <li>Templating Kubernetes YAML files to allow configuration</li>
+            <li>Managing deployments, upgrades, and rollbacks using Helm commands</li>
+            <li>Integrating Helm into CI/CD pipelines</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Helm is the package manager for Kubernetes. Just as <code>apt</code> is for Debian or <code>npm</code> is for Node.js, Helm helps you manage Kubernetes applications. Instead of managing dozens of hard-coded YAML files, Helm allows you to define, install, and upgrade even the most complex Kubernetes applications as a single bundled package called a <strong>Chart</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before Helm</div>
+            <p>You have dozens of YAML files for Deployments, Services, and Ingresses. To deploy to staging and production, you copy-paste the files and manually change the image tags, resource limits, and replica counts. There is no version history of deployments and rolling back means tracking down the old YAML files and applying them.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After Helm</div>
+            <p>You have one generic set of templates (a Chart). You supply different <code>values.yaml</code> files for staging and production. Deploying, upgrading, or rolling back an entire application is done with a single command. Helm tracks deployment history directly in the cluster.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of a Helm Chart like a cooking recipe template. The template gives you the instructions, but the <code>Values</code> are the specific ingredients you choose. When you bake it (install it), you get a finished cake (a Release).</p>
+          <div class="model-chain">
+            <span class="model-item">Chart (Template)</span>
+            <span class="model-arrow">+</span>
+            <span class="model-item">Values (Config)</span>
+            <span class="model-arrow">=</span>
+            <span class="model-item model-focus">Release (Running App)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>Helm combines a directory of templates (which look like normal Kubernetes YAML but with Go template syntax inside) with configuration values. When you run <code>helm install</code>, Helm renders the templates by injecting the values, producing standard Kubernetes manifests, and then applies them to the cluster.</p>
+          <p>It also keeps track of each installation as a <strong>Release</strong> in the cluster (stored as Secrets), so it knows exactly what was deployed, allowing you to upgrade or rollback effortlessly.</p>
+          
+          <h3>Chart Structure</h3>
+          <p>A standard Helm chart looks like this:</p>
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span class="code-block-lang">bash</span>
+              <button class="code-copy-btn">Copy</button>
+            </div>
+            <pre><code class="language-bash">taskflow-chart/
+├── Chart.yaml        # chart metadata (name, version, appVersion)
+├── values.yaml       # default configuration values
+├── templates/        # Kubernetes manifests with template syntax
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   ├── configmap.yaml
+│   ├── secret.yaml
+│   ├── hpa.yaml
+│   └── _helpers.tpl  # reusable template snippets
+└── charts/          # chart dependencies (e.g., a database chart)</code></pre>
+            <div class="code-annotation">↑ The standard directory layout for a Helm chart.</div>
+          </div>
+          
+          <h3>Go Template Syntax</h3>
+          <p>Helm uses Go templates to inject values into YAML:</p>
+          <ul>
+            <li><code>{{ .Values.image.tag }}</code>: Injects a value from <code>values.yaml</code>.</li>
+            <li><code>{{ .Release.Name }}</code>: The name you gave the release when installing.</li>
+            <li><code>{{ include "taskflow.labels" . }}</code>: Includes a reusable snippet from <code>_helpers.tpl</code>.</li>
+            <li><code>{{ if .Values.ingress.enabled }}</code>: Conditionally renders blocks of YAML.</li>
+            <li><code>{{ range .Values.env }}</code>: Iterates over lists to create multiple YAML elements.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">HELM DEPLOYMENT WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Chart Templates</div>
+              <div class="flow-label">deployment.yaml</div>
+            </div>
+            <div class="flow-arrow-h">+</div>
+            <div class="flow-node">
+              <div class="flow-box">values.yaml</div>
+              <div class="flow-label">image.tag=v2</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Helm Engine</div>
+              <div class="flow-label">Renders YAML</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Kubernetes</div>
+              <div class="flow-label">Applied Resources</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Chart</td><td>A bundle of information necessary to create an instance of a Kubernetes application.</td><td><code>taskflow-chart</code></td></tr>
+            <tr><td>Release</td><td>A running instance of a chart, combined with a specific config.</td><td><code>taskflow-prod</code></td></tr>
+            <tr><td>Repository</td><td>A place where packaged charts can be collected and shared.</td><td>Artifact Hub, Bitnami</td></tr>
+            <tr><td>Values</td><td>Configuration data provided to a chart to customize its deployment.</td><td><code>values.yaml</code></td></tr>
+            <tr><td>Hooks</td><td>Scripts or jobs that run at specific points in a release lifecycle (pre-install, post-upgrade).</td><td>Running DB migrations before app upgrade</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Packaging TaskFlow</h4>
+          </div>
+          <p>We will package the TaskFlow Backend and Frontend into a single <code>taskflow-chart</code>. Instead of hardcoding environment variables or replica counts, we expose them in <code>values.yaml</code>. In GitLab CI, our deploy job will run <code>helm upgrade --install</code> passing in the new <code>$CI_COMMIT_SHA</code> as the image tag, ensuring seamless updates.</p>
+        </div>
+        
+        <h4>Example TaskFlow Deployment Template</h4>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskflow.fullname" . }}
+  labels:
+    {{- include "taskflow.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "taskflow.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "taskflow.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000</code></pre>
+          <div class="code-annotation">↑ Notice how the image tag, replicas, and names are all dynamic templates.</div>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <p>Creating and managing a chart:</p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Create a new boilerplate chart
+helm create taskflow-chart
+
+# Check for syntax errors in your templates
+helm lint ./taskflow-chart
+
+# Render templates locally to see the generated YAML without deploying
+helm template taskflow-release ./taskflow-chart --set image.tag=v1.0.0</code></pre>
+          <div class="code-annotation">↑ Useful commands for developing charts.</div>
+        </div>
+
+        <p>Deploying and managing releases:</p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Install a chart
+helm install taskflow ./taskflow-chart -f staging-values.yaml
+
+# Upgrade an existing release
+helm upgrade taskflow ./taskflow-chart --set image.tag=v1.2.0
+
+# Idempotent install or upgrade (often used in CI/CD)
+helm upgrade --install taskflow ./taskflow-chart -n production -f production-values.yaml
+
+# View release history
+helm history taskflow
+
+# Rollback to revision 2
+helm rollback taskflow 2
+
+# Uninstall release
+helm uninstall taskflow</code></pre>
+          <div class="code-annotation">↑ Managing the lifecycle of applications with Helm.</div>
+        </div>
+        
+        <p>Working with Repositories:</p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Add the Bitnami repository (great for DBs)
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+# Search for a chart
+helm search repo postgresql</code></pre>
+          <div class="code-annotation">↑ Accessing pre-built community charts.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Whitespace and Indentation Errors in YAML Rendering</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Use the <code>| nindent 4</code> pipeline function in templates to correctly indent generated YAML blocks. Always test with <code>helm template</code>.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Using <code>helm install</code> in CI pipelines</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> <code>helm install</code> fails if the release already exists. Use <code>helm upgrade --install</code> in CI/CD to handle both initial deployment and future updates seamlessly.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: helm upgrade stuck in "pending-upgrade" state</span>
+            <span class="ts-cause">Cause: A previous upgrade failed or was interrupted, leaving a lock.</span>
+            <span class="ts-fix">Fix: Rollback the release or use <code>helm rollback release-name</code>. You can also try adding <code>--force</code> to upgrade.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Values not being applied</span>
+            <span class="ts-cause">Cause: Value precedence issue.</span>
+            <span class="ts-fix">Fix: Remember precedence: <code>--set</code> overrides <code>-f custom-values.yaml</code> which overrides <code>values.yaml</code>. Ensure your value paths match exactly.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Package Nginx with Helm</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Run <code>helm create my-nginx</code>.</li>
+            <li>Edit <code>my-nginx/values.yaml</code> and change <code>replicaCount</code> to 2.</li>
+            <li>Run <code>helm template my-release ./my-nginx</code> to verify it generates a Deployment with 2 replicas.</li>
+            <li>Run <code>helm install my-release ./my-nginx</code> to deploy it to your cluster.</li>
+            <li>Run <code>helm upgrade my-release ./my-nginx --set replicaCount=3</code> to scale it.</li>
+            <li>Run <code>helm uninstall my-release</code> to clean up.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between a Chart and a Release?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>A Chart is the package of templates and default values (the blueprint). A Release is a deployed, running instance of that chart in the cluster (the actual application).</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="12-kubernetes-core.html" class="cross-link-chip">☸️ Kubernetes Deployments</a>
+          <a href="10-cicd.html" class="cross-link-chip">🔄 CI/CD Pipelines</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Helm gives us the ability to deploy complex apps easily. However, running <code>helm upgrade</code> directly from a CI runner can lead to configuration drift and requires giving the CI system cluster admin credentials. Next, we will look at <strong>GitOps with Argo CD</strong>, a better way to deploy Helm charts where the cluster pulls its configuration directly from Git.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

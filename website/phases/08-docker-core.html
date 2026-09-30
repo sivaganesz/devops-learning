@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Core Concepts | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="07-app-build-runtime.html" class="ctx-link">Phase 07: Application Build & Runtime</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 08: Docker Core Concepts</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="09-docker-advanced.html" class="ctx-link">Phase 09: Dockerfile & Compose</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 08</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Docker Core Concepts</h1>
+        <p class="page-subtitle">Learn the foundational concepts of containerization. Understand how Docker solves the "it works on my machine" problem, how it differs from VMs, and the underlying Linux technologies that make it work.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Basic understanding of Linux commands (<a href="03-linux.html">Phase 02</a>)</li>
+            <li>Familiarity with application runtimes (<a href="07-app-build-runtime.html">Phase 07</a>)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How containers differ from Virtual Machines</li>
+            <li>The role of namespaces and cgroups in containerization</li>
+            <li>The anatomy of Docker images and layers</li>
+            <li>Essential Docker commands and container lifecycle</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Docker is an open-source platform that automates the deployment, scaling, and management of applications inside lightweight, portable environments called <strong>containers</strong>.</p>
+          <p>Think of Docker as the shipping container of the software world. Before standard shipping containers, cargo was loaded individually—sacks, barrels, boxes—making loading and unloading slow, error-prone, and inconsistent across different ships and ports. Standardized containers revolutionized shipping by providing a uniform way to package any cargo.</p>
+          <p>Similarly, Docker standardizes how software is packaged. A Docker container packages the application code along with all its dependencies, libraries, and configuration files into a single artifact that runs reliably on any environment—whether it's a developer's laptop, a testing server, or a production cloud environment.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before Docker</div>
+            <p><strong>The "It works on my machine" problem.</strong> Developers had to write detailed setup documentation for environments. Applications often failed in production due to OS differences, missing system libraries, or conflicting dependency versions (e.g., App A needs Node.js 14, App B needs Node.js 18). Deployments were manual, slow, and fragile.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After Docker</div>
+            <p><strong>Run anywhere reliably.</strong> The application and its exact environment are packaged together. If the container runs on the developer's laptop, it is guaranteed to run exactly the same way in production. Dependency conflicts disappear because each app is isolated in its own container.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model (for complex topics) -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model: The Container Factory</div>
+          <p class="mental-model-analogy">A <strong>Dockerfile</strong> is the blueprint. `docker build` takes the blueprint and creates an <strong>Image</strong> (a read-only mold). `docker run` uses that mold to stamp out a running <strong>Container</strong> (an active, isolated instance).</p>
+          <div class="model-chain">
+            <span class="model-item">Dockerfile (Blueprint)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Image (Read-Only Layers)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Container (Running Process)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>Virtual Machines vs Containers</h3>
+          <p>It's crucial to understand why containers are not VMs. They operate on entirely different levels of abstraction.</p>
+          
+          <table class="term-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Virtual Machine (VM)</th>
+                <th>Container (Docker)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Architecture</strong></td>
+                <td>Virtualizes the hardware via a Hypervisor.</td>
+                <td>Virtualizes the OS. Shares the host kernel.</td>
+              </tr>
+              <tr>
+                <td><strong>Size</strong></td>
+                <td>Gigabytes (includes full OS).</td>
+                <td>Megabytes (only app + dependencies).</td>
+              </tr>
+              <tr>
+                <td><strong>Boot Time</strong></td>
+                <td>Minutes (has to boot a full OS).</td>
+                <td>Milliseconds (just starting a process).</td>
+              </tr>
+              <tr>
+                <td><strong>Isolation</strong></td>
+                <td>High (hardware-level isolation).</td>
+                <td>Medium (process-level isolation).</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>The Magic of Linux: Namespaces and cgroups</h3>
+          <p>Containers are not magic; they are just Linux processes that have been isolated using kernel features:</p>
+          <ul>
+            <li><strong>Namespaces:</strong> Provide isolation. They trick a process into thinking it has its own isolated instance of global resources. 
+              <ul>
+                <li><code>PID</code>: Process IDs (container thinks it's PID 1).</li>
+                <li><code>NET</code>: Network interfaces (container gets its own IP).</li>
+                <li><code>MNT</code>: Mount points (container has its own filesystem).</li>
+                <li><code>UTS</code>: Hostname.</li>
+                <li><code>USER</code>: User privileges.</li>
+              </ul>
+            </li>
+            <li><strong>cgroups (Control Groups):</strong> Provide resource limitation. They ensure a container cannot consume more CPU, Memory, or I/O than it is allocated, preventing noisy neighbor problems.</li>
+          </ul>
+
+          <h3>Images and Layers</h3>
+          <p>A Docker image is constructed from a stack of read-only <strong>layers</strong>. Every instruction in a Dockerfile (like `COPY` or `RUN`) creates a new layer. These layers are stacked using a Union Filesystem (like `overlay2`), where the top layer wins if files conflict.</p>
+          <p>When you start a container from an image, Docker adds a thin, writable "container layer" on top of the read-only image layers. Any changes made by the running container (writing files, modifying data) happen in this writable layer. If you delete the container, the writable layer is deleted, but the underlying image layers remain untouched.</p>
+          <p>Because layers are read-only, they can be safely shared across different images, saving massive amounts of disk space and download time.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">DOCKER ENGINE ARCHITECTURE</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Docker CLI</div>
+              <div class="flow-label">User interface</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Docker Daemon (dockerd)</div>
+              <div class="flow-label">Manages objects (REST API)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">containerd & runc</div>
+              <div class="flow-label">Kernel interface</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">🖼️</div>
+            <div class="concept-card-title">Image</div>
+            <div class="concept-card-desc">A read-only template with instructions for creating a Docker container. Identified by a SHA256 hash.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">📦</div>
+            <div class="concept-card-title">Container</div>
+            <div class="concept-card-desc">A runnable instance of an image. Isolated from other containers and the host machine.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">📚</div>
+            <div class="concept-card-title">Registry</div>
+            <div class="concept-card-desc">A centralized service (like Docker Hub) that stores and distributes Docker images.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Running the Application</h4>
+          </div>
+          <p>In our TaskFlow project, the backend API is built using NestJS. Instead of forcing every developer to install Node.js 20, PostgreSQL, and configure them manually, we provide Docker images.</p>
+          <p>When you run <code>docker run -p 3000:3000 taskflow-api:latest</code>, Docker pulls the <code>taskflow-api</code> image (if not present locally), creates a container (allocating namespaces/cgroups), adds a writable layer, maps host port 3000 to container port 3000, and starts the Node.js process inside.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Essential Commands</h2>
+        
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Run a container (pulls image if needed, starts it, attaches terminal)
+# -i = interactive, -t = tty, --rm = remove container when it exits
+docker run -it --rm ubuntu:22.04 /bin/bash</code></pre>
+          <div class="code-annotation">↑ Starts an interactive Ubuntu shell, cleans up when you exit.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Run a container in the background (detached) with port mapping
+docker run -d -p 8080:80 nginx:alpine</code></pre>
+          <div class="code-annotation">↑ Runs Nginx in background, mapping port 8080 on your machine to 80 in container.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># List running containers
+docker ps
+
+# List all containers (including stopped ones)
+docker ps -a</code></pre>
+          <div class="code-annotation">↑ View container status and IDs.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># View logs of a running container
+docker logs -f &lt;container_id&gt;</code></pre>
+          <div class="code-annotation">↑ The -f flag follows the logs in real-time, like `tail -f`.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Execute a command in an already running container
+docker exec -it &lt;container_id&gt; sh</code></pre>
+          <div class="code-annotation">↑ Drop into a shell inside a running container to debug.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Treating containers like VMs</div>
+          <p>People often try to SSH into containers, install packages, and update code manually while it's running, treating it like a persistent server.</p>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Containers are <strong>ephemeral</strong>. Any changes made to a running container are lost when it's removed. If you need a permanent change, update the Dockerfile and build a new image.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Container exits immediately after starting.</span>
+            <span class="ts-cause">Cause: The main process (PID 1) finished or crashed. A container only lives as long as its main process.</span>
+            <span class="ts-fix">Fix: <code>docker logs &lt;container_id&gt;</code> to see the error. Ensure the main command is long-running (not a background daemon).</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Host machine running out of disk space.</span>
+            <span class="ts-cause">Cause: Accumulation of unused images, stopped containers, and volumes.</span>
+            <span class="ts-fix">Fix: <code>docker system prune -a</code> to clean up unused resources.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Explore Container Isolation</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Run an Alpine container interactively: <code>docker run -it alpine sh</code></li>
+            <li>Inside the container, create a file: <code>touch /hello-world.txt</code></li>
+            <li>Exit the container (type <code>exit</code> or Ctrl+D).</li>
+            <li>Run a NEW Alpine container: <code>docker run -it alpine sh</code></li>
+            <li>Check for the file: <code>ls /hello-world.txt</code>. Notice it's not there!</li>
+            <li>Exit and find your stopped containers using <code>docker ps -a</code>. Clean them up with <code>docker rm &lt;container_id&gt;</code>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why doesn't a Docker container need to boot an operating system?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Because containers share the host machine's OS kernel. They don't have their own kernel to boot; they rely on Linux namespaces and cgroups to isolate processes running on the existing host kernel.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="03-linux.html" class="cross-link-chip">🐧 Linux Basics</a>
+          <a href="07-app-build-runtime.html" class="cross-link-chip">⚙️ App Runtime</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you understand what containers and images are, it's time to learn how to create your own images using a Dockerfile and how to orchestrate multi-container applications using Docker Compose.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+      
+    </div>
+  </main>
+
+  <!-- RIGHT TOC -->
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<!-- Scripts -->
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

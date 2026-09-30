@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 18: Monitoring & Logging | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="17-terraform.html" class="ctx-link">Phase 17: Terraform & IaC</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 18: Monitoring & Logging</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="19-security.html" class="ctx-link">Phase 19: DevSecOps</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 18</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">Monitoring & Logging</h1>
+        <p class="page-subtitle">Gain deep visibility into your applications and infrastructure using Prometheus, Grafana, and structured logging.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="12-kubernetes-core.html">Phase 13: Kubernetes Core</a></li>
+            <li><a href="15-helm.html">Phase 15: Helm</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The three pillars of observability</li>
+            <li>Setting up Prometheus and querying with PromQL</li>
+            <li>Building Grafana dashboards and alerting rules</li>
+            <li>Centralized logging with Loki/ELK</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Monitoring and logging provide visibility into running systems. <strong>Monitoring</strong> involves tracking metrics (CPU, memory, request rates) over time. <strong>Logging</strong> captures discrete events (errors, transactions). Together, they help you detect issues proactively and debug them efficiently.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before Monitoring</div>
+            <p>Production incidents are discovered because angry users complain on Twitter. You SSH into servers randomly or run <code>kubectl logs</code> on individual pods, hoping to catch the error. You cannot fix what you cannot see.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After Monitoring</div>
+            <p>An alert fires in Slack before users notice a degradation. You check a Grafana dashboard to see a spike in latency, then query centralized logs with LogQL to pinpoint the exact code error.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of the three pillars of observability: Metrics are the car dashboard (speedometer, fuel gauge). Alerts are the check engine light. Logs are the mechanic's detailed diagnostic printout.</p>
+          <div class="model-chain">
+            <span class="model-item">Metrics (Prometheus)</span>
+            <span class="model-arrow">alerts via →</span>
+            <span class="model-item model-focus">Dashboards (Grafana)</span>
+            <span class="model-arrow">investigate via →</span>
+            <span class="model-item">Logs (Loki/ELK)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>Prometheus (Metrics)</h3>
+          <p>Prometheus uses a <strong>pull model</strong>. It scrapes metrics endpoints via HTTP at regular intervals. It stores this data in a time-series database. Metrics have types (Counter, Gauge, Histogram) and labels (key-value pairs) for filtering.</p>
+          <h3>Grafana (Dashboards)</h3>
+          <p>Grafana queries Prometheus (using PromQL) to render visual dashboards. It can also configure alerting rules based on thresholds.</p>
+          <h3>Logging</h3>
+          <p>Containers output logs to stdout/stderr. A log aggregator (like Promtail) runs as a DaemonSet, collects these logs from all nodes, and ships them to a central system (like Loki) for querying.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">OBSERVABILITY STACK</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">App Pods</div>
+              <div class="flow-label">/metrics endpoint</div>
+            </div>
+            <div class="flow-arrow-h">← pull</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Prometheus</div>
+              <div class="flow-label">Time-series DB</div>
+            </div>
+            <div class="flow-arrow-h">query →</div>
+            <div class="flow-node">
+              <div class="flow-box">Grafana</div>
+              <div class="flow-label">Dashboards/Alerts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Counter</td><td>A metric that only goes up.</td><td>Total HTTP requests</td></tr>
+            <tr><td>Gauge</td><td>A metric that can go up or down.</td><td>Current Memory usage</td></tr>
+            <tr><td>PromQL</td><td>Query language for Prometheus.</td><td><code>rate(http_requests_total[5m])</code></td></tr>
+            <tr><td>ServiceMonitor</td><td>CRD to tell Prometheus what to scrape.</td><td>Scrape TaskFlow API on port 3000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Monitoring the TaskFlow Backend</h4>
+          </div>
+          <p>We deploy the <code>kube-prometheus-stack</code> via Helm. In our NestJS backend, we add the <code>@willsoto/nestjs-prometheus</code> library to expose a <code>/metrics</code> endpoint. We create a ServiceMonitor so Prometheus scrapes it. In Grafana, we build a dashboard showing TaskFlow's request rate, error rate, and active database connections.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <p>Example PromQL Queries:</p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Request rate (per second) over 5 minutes
+rate(http_requests_total{job="taskflow-api"}[5m])
+
+# Error rate percentage
+sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) * 100
+
+# Pod memory usage
+container_memory_usage_bytes{pod=~"taskflow-api.*"}</code></pre>
+          <div class="code-annotation">↑ Use these queries in Grafana panels.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Alert Fatigue</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Alert on symptoms (high error rate, user latency), not causes (CPU is at 80%). Too many trivial alerts lead to developers ignoring them entirely.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ High Cardinality Metrics</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Don't put user IDs or dynamic URLs in Prometheus labels. It creates millions of time series and crashes Prometheus. Keep labels bounded (like status codes).</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Metrics not appearing in Grafana</span>
+            <span class="ts-cause">Cause: Prometheus is not scraping the target.</span>
+            <span class="ts-fix">Fix: Check the 'Targets' page in the Prometheus UI to see if the endpoint is up or dropping. Check ServiceMonitor labels.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Install kube-prometheus-stack</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Run <code>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</code>.</li>
+            <li>Run <code>helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace</code>.</li>
+            <li>Port-forward Grafana: <code>kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80</code>.</li>
+            <li>Login (admin/prom-operator) and explore the built-in Kubernetes dashboards.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why does Prometheus use a pull model instead of a push model?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>A pull model allows Prometheus to easily tell if a service is down (it can't reach it to scrape). It also prevents a flood of metrics from taking down the monitoring server, and makes running local test monitoring easier.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="15-helm.html" class="cross-link-chip">☸️ Helm</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that our systems are deployed automatically and monitored continuously, we need to ensure they are secure. The next phase will cover <strong>Security & DevSecOps</strong>.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 17: Terraform & IaC | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="16-gitops.html" class="ctx-link">Phase 16: GitOps & Argo CD</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 17: Terraform & IaC</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="18-monitoring.html" class="ctx-link">Phase 18: Monitoring & Logging</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 17</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">Terraform & Infrastructure as Code (IaC)</h1>
+        <p class="page-subtitle">Automate cloud infrastructure provisioning using declarative code.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Basic Cloud concepts (VPC, IAM)</li>
+            <li><a href="16-gitops.html">Phase 16: GitOps</a> (Understanding declarative state)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How to write Infrastructure as Code using HCL</li>
+            <li>The Terraform lifecycle: init, plan, apply, destroy</li>
+            <li>Managing Terraform state files securely</li>
+            <li>The difference between Terraform and GitOps</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Terraform is an open-source Infrastructure as Code (IaC) tool by HashiCorp. It allows you to define both cloud and on-premise resources in human-readable configuration files that you can version, reuse, and share. Instead of clicking through a web console to create servers, networks, and databases, you write code that Terraform executes via cloud provider APIs.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before IaC (ClickOps)</div>
+            <p>You log into the AWS Console and click through screens to create a VPC, subnets, and an EKS cluster. It takes hours. When you need a staging environment, you have to remember exactly what you clicked. Configuration drift occurs because humans make mistakes, and there is no version control or audit trail for infrastructure changes.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After IaC (Terraform)</div>
+            <p>Your entire infrastructure is defined in code. Spinning up a complete replica for staging takes a single <code>terraform apply</code> command. All changes go through pull requests, so team members can review them. The code acts as live documentation of your architecture.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of Terraform as the construction crew that builds the factory (networks, clusters, databases). GitOps/Argo CD is the factory manager who operates the assembly line inside the factory (deploying apps to the cluster).</p>
+          <div class="model-chain">
+            <span class="model-item model-focus">Terraform</span>
+            <span class="model-arrow">provisions →</span>
+            <span class="model-item">Infrastructure (EKS, RDS)</span>
+            <span class="model-arrow">hosts →</span>
+            <span class="model-item">Argo CD (GitOps)</span>
+            <span class="model-arrow">deploys →</span>
+            <span class="model-item">Applications</span>
+          </div>
+          <div class="alert alert-info" style="margin-top: 1rem;">
+            <span class="alert-icon">ℹ️</span>
+            <div class="alert-body">
+              <div class="alert-title">Terraform vs GitOps</div>
+              <p>Terraform manages <strong>infrastructure</strong> (servers, VPCs, managed Kubernetes clusters). GitOps manages <strong>applications</strong> (what runs inside Kubernetes). They are complementary. Terraform builds the cluster; GitOps deploys apps to it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>Terraform connects to cloud providers via <strong>Providers</strong> (plugins). You declare <strong>Resources</strong> in HCL (HashiCorp Configuration Language).</p>
+          <p>When you run Terraform, it compares your desired code state against the real-world infrastructure and an internal tracking file called <strong>State</strong> (<code>terraform.tfstate</code>). It calculates the difference and creates an execution plan.</p>
+          
+          <h3>Core Concepts</h3>
+          <ul>
+            <li><strong>Providers:</strong> Plugins that interact with cloud APIs (e.g., AWS, Azure, GCP).</li>
+            <li><strong>Resources:</strong> The actual objects being created (e.g., <code>aws_vpc</code>).</li>
+            <li><strong>Data Sources:</strong> Read-only fetches of existing data (e.g., finding the latest Ubuntu AMI).</li>
+            <li><strong>Variables:</strong> Input parameters for your modules.</li>
+            <li><strong>Outputs:</strong> Return values exposed after execution (e.g., a database connection string).</li>
+            <li><strong>State:</strong> JSON file mapping your code resources to actual cloud IDs.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">TERRAFORM LIFECYCLE WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Write HCL Code</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">terraform init</div>
+              <div class="flow-label">Downloads providers</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">terraform plan</div>
+              <div class="flow-label">Shows changes</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">terraform apply</div>
+              <div class="flow-label">Provisions resources</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>State File</td><td>Tracks the mapping between HCL resources and real cloud objects.</td><td><code>terraform.tfstate</code></td></tr>
+            <tr><td>Remote State</td><td>Storing state in a shared backend (like S3) for team collaboration.</td><td>S3 + DynamoDB locking</td></tr>
+            <tr><td>Module</td><td>Reusable package of Terraform configurations.</td><td>AWS VPC Module</td></tr>
+            <tr><td>Drift</td><td>When real infrastructure changes outside of Terraform.</td><td>Manual AWS Console edit</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>TaskFlow Infrastructure</h4>
+          </div>
+          <p>We use Terraform to provision the foundational AWS environment for TaskFlow. This includes a VPC with public and private subnets, an RDS PostgreSQL database instance in the private subnet, and the EKS cluster itself. Once Terraform finishes applying, our cluster is ready for Argo CD to take over.</p>
+        </div>
+        
+        <h4>Example HCL: Provisioning a VPC</h4>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">hcl</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-hcl">provider "aws" {
+  region = "us-east-1"
+}
+
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
+
+  name = "taskflow-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+
+  enable_nat_gateway = true
+}</code></pre>
+          <div class="code-annotation">↑ Using a public module to create a complex network architecture easily.</div>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Initialize working directory, download providers/modules
+terraform init
+
+# Validate syntax
+terraform validate
+
+# Create an execution plan (dry run)
+terraform plan
+
+# Apply the changes to reach desired state
+terraform apply
+
+# Destroy all resources managed by this configuration
+terraform destroy
+
+# Manage state
+terraform state list
+terraform state show aws_vpc.main</code></pre>
+          <div class="code-annotation">↑ The standard Terraform workflow commands.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Committing state files with secrets</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Terraform state files often contain sensitive data (like DB passwords) in plaintext. Never commit <code>terraform.tfstate</code> to Git. Always use a remote backend like S3 with encryption.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Applying without reviewing the plan</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Always run <code>terraform plan</code> and review output before <code>terraform apply</code>. A typo can accidentally destroy production databases.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Error acquiring the state lock</span>
+            <span class="ts-cause">Cause: Another process is running Terraform, or a previous run crashed.</span>
+            <span class="ts-fix">Fix: Ensure no one else is running apply. If it was a crash, use <code>terraform force-unlock &lt;lock-id&gt;</code> carefully.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Resource already exists</span>
+            <span class="ts-cause">Cause: The resource was created manually outside Terraform.</span>
+            <span class="ts-fix">Fix: Import the existing resource into Terraform state using <code>terraform import</code>.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Provision a Local File</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a file <code>main.tf</code> containing the local provider.</li>
+            <li>Define a <code>local_file</code> resource with filename "hello.txt" and some content.</li>
+            <li>Run <code>terraform init</code>.</li>
+            <li>Run <code>terraform plan</code> and observe the output.</li>
+            <li>Run <code>terraform apply</code>. Check that the file was created.</li>
+            <li>Change the content in <code>main.tf</code>, run plan/apply again to see the update.</li>
+            <li>Run <code>terraform destroy</code> to clean up.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is a remote state backend important for teams using Terraform?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>A remote backend (like AWS S3) allows multiple developers to share the state file. When combined with state locking (like DynamoDB), it prevents concurrent runs that could corrupt the infrastructure state.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="16-gitops.html" class="cross-link-chip">🔄 GitOps Workflow</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that we have infrastructure provisioned by Terraform and applications deployed by GitOps, how do we know if everything is running correctly? In the next phase, we'll dive into <strong>Monitoring & Logging</strong> to gain visibility into our systems.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

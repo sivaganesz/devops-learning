@@ -1,0 +1,311 @@
+/* ============================================================
+   DevOps Mastery — content.css
+   Main content area: typography, sections, headings, article layout
+   ============================================================ */
+
+/* ---------------------------------------------------------------
+   Main Content Wrapper
+   --------------------------------------------------------------- */
+.main-content {
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--sp-10) var(--sp-8);
+}
+
+.content-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ---------------------------------------------------------------
+   Page Header
+   --------------------------------------------------------------- */
+.page-header {
+  margin-bottom: var(--sp-10);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--txt-primary);
+  margin-bottom: var(--sp-4);
+}
+
+.page-subtitle {
+  font-size: 1.0625rem;
+  color: var(--txt-secondary);
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+/* Phase number label */
+.phase-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+}
+
+/* ---------------------------------------------------------------
+   Level Badges
+   --------------------------------------------------------------- */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border-radius: 2em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.level-badge.beginner {
+  background: var(--bg-success);
+  color: var(--clr-success);
+  border: 1px solid color-mix(in srgb, var(--clr-success) 30%, transparent);
+}
+.level-badge.intermediate {
+  background: var(--bg-warning);
+  color: var(--clr-warning);
+  border: 1px solid color-mix(in srgb, var(--clr-warning) 30%, transparent);
+}
+.level-badge.advanced {
+  background: var(--bg-error);
+  color: var(--clr-error);
+  border: 1px solid color-mix(in srgb, var(--clr-error) 30%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   Section Headings
+   --------------------------------------------------------------- */
+.content-section {
+  margin-bottom: var(--sp-12);
+  scroll-margin-top: calc(var(--topbar-height) + var(--sp-4));
+}
+
+.section-anchor {
+  display: block;
+  position: relative;
+  top: calc(-1 * (var(--topbar-height) + 20px));
+  visibility: hidden;
+}
+
+h2.section-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--txt-primary);
+  margin-bottom: var(--sp-6);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+h2.section-title .section-icon {
+  font-size: 1.25rem;
+}
+
+h3.subsection-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--txt-primary);
+  margin-bottom: var(--sp-4);
+  margin-top: var(--sp-6);
+}
+
+h4.item-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--txt-primary);
+  margin-bottom: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+/* ---------------------------------------------------------------
+   Prose Typography
+   --------------------------------------------------------------- */
+.prose p { margin-bottom: var(--sp-4); }
+.prose p:last-child { margin-bottom: 0; }
+
+.prose ul,
+.prose ol {
+  margin-bottom: var(--sp-4);
+}
+.prose li { margin-bottom: var(--sp-1); }
+.prose li:last-child { margin-bottom: 0; }
+
+.prose strong { font-weight: 600; color: var(--txt-primary); }
+.prose em { font-style: italic; color: var(--txt-secondary); }
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--accent-dim);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  margin: var(--sp-6) 0;
+  color: var(--txt-secondary);
+  font-style: italic;
+}
+.prose blockquote strong {
+  color: var(--accent-bright);
+}
+
+/* ---------------------------------------------------------------
+   Bottom Navigation (Prev / Next)
+   --------------------------------------------------------------- */
+.bottom-nav {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-4);
+  margin-top: var(--sp-16);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--border);
+}
+
+.bottom-nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  text-decoration: none;
+  color: var(--txt-primary);
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.bottom-nav-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  text-decoration: none;
+  color: var(--txt-primary);
+}
+
+.bottom-nav-btn.nav-prev { justify-content: flex-start; }
+.bottom-nav-btn.nav-next { justify-content: flex-end; text-align: right; }
+.bottom-nav-btn.nav-next .nav-btn-text { text-align: right; }
+
+.nav-btn-arrow { font-size: 1.25rem; color: var(--accent); flex-shrink: 0; }
+
+.nav-btn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.nav-btn-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+}
+.nav-btn-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--txt-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Spacer for single direction nav */
+.bottom-nav-spacer { flex: 1; }
+
+/* ---------------------------------------------------------------
+   Before/After Comparison Block
+   --------------------------------------------------------------- */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin: var(--sp-6) 0;
+}
+.before-after-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+}
+.before-after-panel.panel-before {
+  border-top: 3px solid var(--clr-error);
+}
+.before-after-panel.panel-after {
+  border-top: 3px solid var(--clr-success);
+}
+.before-after-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-3);
+}
+.panel-before .before-after-label { color: var(--clr-error); }
+.panel-after  .before-after-label { color: var(--clr-success); }
+
+@media (max-width: 600px) {
+  .before-after { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------
+   Terminology / Glossary Table
+   --------------------------------------------------------------- */
+.term-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--sp-6) 0;
+  font-size: 0.875rem;
+}
+.term-table th {
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 2px solid var(--border);
+}
+.term-table td {
+  padding: var(--sp-3);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+.term-table tr:last-child td { border-bottom: none; }
+.term-table tr:hover td { background: var(--bg-surface); }
+.term-table td:first-child {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--clr-info);
+  white-space: nowrap;
+  padding-right: var(--sp-4);
+}
+
+/* ---------------------------------------------------------------
+   Responsive content padding
+   --------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .main-content {
+    padding: var(--sp-6) var(--sp-4);
+  }
+}
+@media (max-width: 600px) {
+  .main-content {
+    padding: var(--sp-5) var(--sp-3);
+  }
+  .page-title { font-size: 1.5rem; }
+}

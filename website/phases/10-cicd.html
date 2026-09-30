@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD with GitLab | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="09-docker-advanced.html" class="ctx-link">Phase 09: Dockerfile & Compose</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 10: CI/CD with GitLab</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="11-cloud.html" class="ctx-link">Phase 11: Cloud Architecture</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 10</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">CI/CD with GitLab</h1>
+        <p class="page-subtitle">Automate your build, test, and deployment workflows. Learn how to write robust GitLab CI pipelines to ensure quality and speed in software delivery.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Git fundamentals (<a href="06-git.html">Phase 03</a>)</li>
+            <li>Docker containerization (<a href="08-docker-core.html">Phase 08</a>)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The difference between CI, CD, and Continuous Deployment</li>
+            <li>GitLab CI architecture and Runners</li>
+            <li>Writing a complete `.gitlab-ci.yml` pipeline</li>
+            <li>Handling artifacts, caching, and secure variables</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p><strong>Continuous Integration (CI)</strong> is the practice of automating the integration of code changes from multiple contributors into a single software project. Automated tests are run against every commit to catch bugs early.</p>
+          <p><strong>Continuous Delivery (CD)</strong> automates the release process so that the software can be deployed to production at any time by simply clicking a button.</p>
+          <p><strong>Continuous Deployment (CD)</strong> goes one step further: every change that passes all stages of your production pipeline is released to your customers automatically, with no human intervention.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before CI/CD</div>
+            <p>Code integrations were manual and infrequent, leading to "merge hell." Developers forgot to run tests locally, deploying broken code. Deployments required SSHing into servers, running fragile scripts, and crossing fingers.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After CI/CD</div>
+            <p>Every commit is automatically tested in an isolated environment. The pipeline builds immutable Docker images. Deployments are automated, auditable, and repeatable. Fear of deployment disappears.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model: The Assembly Line</div>
+          <p class="mental-model-analogy">Think of CI/CD as an automated factory assembly line. The code is the raw material. It goes through various stations (stages): quality check (tests), packaging (docker build), safety inspection (security scan), and finally, shipping (deploy).</p>
+          <div class="model-chain">
+            <span class="model-item">Git Push</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">GitLab CI (Tests & Build)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Container Registry</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works: GitLab CI Architecture</h2>
+        <div class="prose">
+          <p>GitLab CI uses a distributed architecture:</p>
+          <ul>
+            <li><strong>GitLab Server:</strong> Stores the code, parses the <code>.gitlab-ci.yml</code> file, and acts as the orchestrator dispatching jobs.</li>
+            <li><strong>GitLab Runner:</strong> A lightweight agent installed on separate servers (or containers) that executes the jobs.
+              <ul>
+                <li><strong>Docker Executor:</strong> The most common runner type. For every job, the runner starts a fresh Docker container, runs the job script inside it, and throws the container away. This ensures a clean, reproducible environment every time.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Pipeline Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">PIPELINE EXECUTION FLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Stage: test</div>
+              <div class="flow-label">Jest / Vitest (Parallel)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Stage: build</div>
+              <div class="flow-label">Docker Build & Push</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Stage: deploy</div>
+              <div class="flow-label">Helm / GitOps</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Definition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pipeline</strong></td>
+              <td>The top-level component representing a full workflow. Triggered by a push or MR.</td>
+            </tr>
+            <tr>
+              <td><strong>Stage</strong></td>
+              <td>A logical grouping of jobs. Stages run sequentially (e.g., test then build).</td>
+            </tr>
+            <tr>
+              <td><strong>Job</strong></td>
+              <td>A single task that runs commands. Jobs in the same stage run in parallel.</td>
+            </tr>
+            <tr>
+              <td><strong>Artifacts</strong></td>
+              <td>Files generated by a job (like compiled binaries) that can be passed to later stages or downloaded.</td>
+            </tr>
+            <tr>
+              <td><strong>Cache</strong></td>
+              <td>Files (like node_modules) saved between pipeline runs to speed up execution.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Automating Our Monorepo</h4>
+          </div>
+          <p>For TaskFlow, we want to run backend unit tests (NestJS) and frontend tests (React) concurrently. If they pass, we build the Docker images and push them to the GitLab Container Registry tagged with the Git commit hash. Finally, we trigger a deployment to staging.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Configuration (.gitlab-ci.yml)</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">stages:
+  - test
+  - build
+  - security
+  - deploy
+
+variables:
+  # Predefined variables are used for registry auth
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA
+
+# --- TEST STAGE ---
+test-backend:
+  stage: test
+  image: node:20-alpine
+  cache:
+    key: "backend-node-modules"
+    paths:
+      - backend/node_modules/
+  script:
+    - cd backend
+    - npm ci
+    - npm run test
+
+# --- BUILD STAGE ---
+build-api:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd backend
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+# --- SECURITY STAGE ---
+scan-image:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH,CRITICAL $IMAGE_TAG
+  allow_failure: true # Don't block pipeline on vulns (for now)
+
+# --- DEPLOY STAGE ---
+deploy-staging:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  environment:
+    name: staging
+  script:
+    - echo "Updating GitOps repo with new tag $IMAGE_TAG"
+    # Logic to update manifest in gitops repo
+  only:
+    - main</code></pre>
+          <div class="code-annotation">↑ Complete pipeline for the TaskFlow backend. Demonstrates stages, cache, Docker-in-Docker (dind) builds, and environments.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Hardcoding Secrets in Scripts</div>
+          <p>Writing `docker login -u user -p mySecretPassword` directly in the `.gitlab-ci.yml`.</p>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Use GitLab CI/CD Variables (Settings > CI/CD > Variables). Mark secrets as <strong>Masked</strong> so they are scrubbed from job logs, and <strong>Protected</strong> so they are only exposed to protected branches (like main).</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Pipeline fails at `docker login` with authentication error.</span>
+            <span class="ts-cause">Cause: Runner doesn't have access to registry credentials.</span>
+            <span class="ts-fix">Fix: Ensure you use the predefined <code>$CI_REGISTRY_USER</code> and <code>$CI_REGISTRY_PASSWORD</code>.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Job fails with "command not found".</span>
+            <span class="ts-cause">Cause: The command doesn't exist inside the Docker image defined in the <code>image:</code> tag for that job.</span>
+            <span class="ts-fix">Fix: Pick an image that has the tools you need, or add a <code>before_script</code> to <code>apk add</code>/<code>apt-get install</code> the tool.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Linting Pipeline</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a new GitLab repository.</li>
+            <li>Add a simple <code>app.js</code> file.</li>
+            <li>Create a <code>.gitlab-ci.yml</code> file with a single stage: <code>test</code>.</li>
+            <li>Use the <code>node:20-alpine</code> image.</li>
+            <li>In the script block, run <code>npx eslint app.js</code>.</li>
+            <li>Commit and push. Watch the pipeline trigger in the GitLab UI!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between Cache and Artifacts in GitLab CI?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p><strong>Cache</strong> is used for ephemeral dependencies (like `node_modules`) to speed up subsequent pipeline runs. It is not guaranteed to exist. <strong>Artifacts</strong> are the intentional output of a job (like a compiled binary or test report) that are guaranteed to be passed to subsequent stages and can be downloaded from the UI.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker</a>
+          <a href="06-git.html" class="cross-link-chip">🌿 Git</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that our code is automatically tested and packaged into Docker images on every commit, we need a robust, scalable place to run those containers in production. Next, we explore Cloud Architecture and Kubernetes.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+      
+    </div>
+  </main>
+  
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

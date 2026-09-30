@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 03 — Linux | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="02-os-concepts.html" class="ctx-link">Phase 02: OS Concepts</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 03: Linux</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="04-shell-scripting.html" class="ctx-link">Phase 04: Shell Scripting</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 03</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">Linux Administration</h1>
+        <p class="page-subtitle">Master the command line, filesystem, permissions, and service management. Linux is the operating system of the cloud.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="02-os-concepts.html">Phase 02: OS Concepts</a> (Understanding processes, ports, files)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The Linux Filesystem Hierarchy</li>
+            <li>Navigating and manipulating files and directories</li>
+            <li>Users, groups, and octal permissions (chmod, chown)</li>
+            <li>Process management and signals</li>
+            <li>SSH, packages, logs, systemd, and networking</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Linux is an open-source operating system kernel that serves as the foundation for nearly all modern infrastructure. Over 90% of cloud servers, all Docker containers, and Kubernetes nodes run on Linux. Unlike Windows, which relies heavily on GUIs, Linux is primarily managed via the CLI (Command Line Interface), making it perfect for automation and scripting in DevOps.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Deploying software involved manually clicking through Wizards on a Windows Server GUI, which cannot be easily tracked in version control, automated in CI/CD, or replicated quickly across 100 servers.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>Using Linux, infrastructure is managed purely through text files, commands, and scripts. This enables Infrastructure as Code, automated deployments, and seamless containerization.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model (for complex topics) -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of a Linux server like a massive filing cabinet and engine room combined. The filesystem tree is the filing cabinet where absolutely everything (even hardware) is treated as a file. The processes and daemons are the workers keeping the engine running.</p>
+          <div class="model-chain">
+            <span class="model-item">Hardware</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Linux Kernel</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">System Daemons (systemd)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">User Applications (TaskFlow)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>The Filesystem Hierarchy</h3>
+          <ul>
+            <li><code>/</code> : Root directory, the top of the hierarchy.</li>
+            <li><code>/bin</code> & <code>/sbin</code> : Essential command binaries.</li>
+            <li><code>/etc</code> : Configuration files (like `.env` for the whole OS).</li>
+            <li><code>/var</code> : Variable data like databases and <code>/var/log/</code> for logs.</li>
+            <li><code>/home</code> : User directories (e.g., <code>/home/sivamuthu</code>).</li>
+            <li><code>/tmp</code> : Temporary files wiped on reboot.</li>
+          </ul>
+
+          <h3>Permissions & Ownership</h3>
+          <p>Every file has an owner, a group, and permissions for Owner (u), Group (g), and Others (o). Permissions are Read (r=4), Write (w=2), and Execute (x=1).</p>
+          <p><code>chmod 755 file</code> = Owner gets 7 (4+2+1=rwx), Group gets 5 (4+1=r-x), Others get 5 (r-x). <code>600</code> means only the owner can read/write (used for SSH private keys).</p>
+
+          <h3>Process Signals</h3>
+          <p>When you kill a process, you send a signal. <code>SIGTERM</code> (15) politely asks the process to save data and shut down cleanly. <code>SIGKILL</code> (9) forces the kernel to terminate it immediately. Always try 15 first to allow graceful shutdowns in containers!</p>
+
+          <h3>SSH (Secure Shell)</h3>
+          <p>Used to remotely log into servers securely. It uses asymmetric cryptography. You generate a keypair (<code>ssh-keygen</code>), keep the private key safe, and put the public key on the server (<code>~/.ssh/authorized_keys</code>). Passwords are too easily brute-forced and should be disabled.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">PIPES & REDIRECTION</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Command 1<br><small>cat server.log</small></div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Pipe ( | )<br><small>stdout to stdin</small></div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Command 2<br><small>grep ERROR</small></div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">> errors.txt<br><small>Redirect to file</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>sudo</td><td>Superuser Do. Execute commands as root.</td><td><code>sudo apt update</code></td></tr>
+            <tr><td>systemd</td><td>Init system managing services/daemons.</td><td><code>systemctl start nginx</code></td></tr>
+            <tr><td>Environment Variable</td><td>Key-value pairs affecting process behavior.</td><td><code>export NODE_ENV=production</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Manual Deployment on Linux Server</h4>
+          </div>
+          <p>Before we learn Docker, let's understand how you'd manually host the TaskFlow API on an Ubuntu VM:</p>
+          <ol>
+            <li>SSH into server: <code>ssh ubuntu@myserver.com</code></li>
+            <li>Install deps: <code>sudo apt update && sudo apt install nodejs npm</code></li>
+            <li>Clone repo: <code>git clone gitlab.com/yourname/taskflow</code></li>
+            <li>Build it: <code>npm ci && npm run build</code></li>
+            <li>Create systemd file: <code>/etc/systemd/system/taskflow.service</code></li>
+            <li>Start it: <code>sudo systemctl enable --now taskflow</code></li>
+            <li>Check logs: <code>journalctl -u taskflow -f</code></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># List files with details (permissions, owner, size, hidden files)
+ls -la
+
+# Change permissions (rwxr-xr-x)
+chmod 755 script.sh
+
+# Find process ID of node and forcefully kill it
+ps aux | grep node
+kill -9 &lt;PID&gt;
+
+# Check network listening ports
+ss -tulpn
+
+# Search for "Error" in logs and write to a new file
+grep "Error" /var/log/syslog > my_errors.txt</code></pre>
+          <div class="code-annotation">↑ Essential daily commands for any DevOps engineer troubleshooting systems.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Using `chmod 777` to fix permission issues</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> 777 gives everyone read/write/execute access, posing a massive security risk. Figure out which user/group actually needs access and use `chown` and specific `chmod` (like 644 or 755).</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Forgetting to run `apt update` before `apt install`</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> The local package index gets stale. Always update it first to avoid 404 Not Found errors when downloading packages.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: SSH Connection Refused / Permission Denied</span>
+            <span class="ts-cause">Cause: SSH key has wrong permissions, or wrong user specified.</span>
+            <span class="ts-fix">Fix: <code>chmod 600 ~/.ssh/id_rsa</code> (Private key MUST not be readable by others).</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: No space left on device</span>
+            <span class="ts-cause">Cause: Disk is full (often due to huge logs).</span>
+            <span class="ts-fix">Fix: Run <code>df -h</code> to see disks, <code>du -sh *</code> to find large folders, and clear `/var/log`.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Navigate and Manipulate the Filesystem</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a directory structure: <code>mkdir -p /tmp/devops/logs</code></li>
+            <li>Create an empty file: <code>touch /tmp/devops/logs/app.log</code></li>
+            <li>Add content using redirection: <code>echo "Application started" > /tmp/devops/logs/app.log</code></li>
+            <li>Append content: <code>echo "ERROR: DB Connection failed" >> /tmp/devops/logs/app.log</code></li>
+            <li>Grep for errors: <code>grep "ERROR" /tmp/devops/logs/app.log</code></li>
+            <li>Change permissions so only you can read it: <code>chmod 600 /tmp/devops/logs/app.log</code></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between > and >> in Linux command redirection?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p><code>></code> overwrites the destination file completely with the new output. <code>>></code> appends the output to the end of the destination file.</p></div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is `kill -15` (SIGTERM) preferred over `kill -9` (SIGKILL)?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>SIGTERM politely asks the process to stop, allowing it to close database connections and finish requests. SIGKILL forces the kernel to instantly terminate the process, potentially corrupting data.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="04-shell-scripting.html" class="cross-link-chip">🐚 Shell Scripting</a>
+          <a href="05-networking.html" class="cross-link-chip">🌐 Networking</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>You can run commands one by one, but DevOps is all about automation. In the next phase, we'll learn how to combine these Linux commands into powerful Bash Scripts to automate deployments, health checks, and system setups.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git & Git Workflows | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="05-networking.html" class="ctx-link">Phase 05: Networking Fundamentals</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 06: Git & Git Workflows</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="07-app-build-runtime.html" class="ctx-link">Phase 07: App Build & Runtime</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 06</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">Git & Git Workflows</h1>
+        <p class="page-subtitle">Understand how Git really works under the hood and learn the workflows that power CI/CD pipelines.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Basic command line knowledge from <a href="03-linux.html">Phase 03</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How Git stores snapshots (Commits, Trees, Blobs).</li>
+            <li>The Three Areas: Working Directory, Staging, Repository.</li>
+            <li>Branching, Merging, and Rebasing correctly.</li>
+            <li>Git workflows used in modern DevOps (Trunk-based development).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Git is a distributed version control system. Unlike older systems that store file diffs (changes), Git thinks of its data as a stream of snapshots of a miniature filesystem. Every time you commit, Git takes a picture of what all your files look like at that moment.</p>
+          <p>In DevOps, Git is the source of truth. Git is where CI/CD pipelines start (GitOps). A push to a specific branch or a tag creation is what triggers automated testing, building, and deployment.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Code is passed around in zip files. Folder names look like <code>project-final-v2-real-final.zip</code>. If two people edit the same file, changes are lost. Deployments happen manually via FTP.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>Every change is tracked with a cryptographic hash, author, and timestamp. Multiple developers work concurrently on branches, merge safely, and changes automatically trigger CI/CD pipelines for deployment.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of Git as three rooms. The Working Directory is your messy desk where you work. The Staging Area is a box where you pack things you want to ship. The Repository is the secure vault where packed boxes are permanently stored with a serial number.</p>
+          <div class="model-chain">
+            <span class="model-item">Working Dir (Modified)</span>
+            <span class="model-arrow">git add →</span>
+            <span class="model-item">Staging Area (Indexed)</span>
+            <span class="model-arrow">git commit →</span>
+            <span class="model-item model-focus">Repository (.git)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>Commits, Trees, and Blobs</h3>
+          <p>Inside the hidden <code>.git/objects</code> directory, Git stores three main types of objects:</p>
+          <ul>
+            <li><strong>Blobs:</strong> The actual file contents.</li>
+            <li><strong>Trees:</strong> Directories. A tree points to blobs and other trees.</li>
+            <li><strong>Commits:</strong> A snapshot pointer. A commit points to the top-level Tree, contains metadata (author, message), and points to parent commits.</li>
+          </ul>
+
+          <h3>Branches are just Pointers</h3>
+          <p>A branch in Git isn't a copy of your files; it's simply a lightweight, movable pointer to a specific commit. The special pointer <code>HEAD</code> tells Git which branch you are currently on. Creating a branch is instantaneous because it just creates a 41-byte file containing a commit hash.</p>
+
+          <h3>Merge vs Rebase</h3>
+          <p><strong>Merge</strong> takes two diverged branches and ties them together with a new "merge commit". It preserves history exactly as it happened. <strong>Rebase</strong> takes your branch's commits and replays them on top of another branch. It creates a clean, linear history but rewrites commit hashes.</p>
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-body"><div class="alert-title">Golden Rule of Rebasing</div><p>Never rebase commits that exist outside your repository and that people may have based work on (like public/shared branches).</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">TRUNK-BASED DEVELOPMENT WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Checkout main</div>
+              <div class="flow-label">git pull</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Feature Branch</div>
+              <div class="flow-label">git switch -c</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Commit & Push</div>
+              <div class="flow-label">Short-lived work</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Pull Request</div>
+              <div class="flow-label">CI Tests Run</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Merge to main</div>
+              <div class="flow-label">Triggers Deploy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tracking Branch</strong></td><td>A local branch that has a direct relationship with a remote branch.</td><td>main tracking origin/main</td></tr>
+            <tr><td><strong>Tag</strong></td><td>A static pointer to a specific commit, often used for releases.</td><td>v1.0.4</td></tr>
+            <tr><td><strong>Merge Conflict</strong></td><td>Happens when two branches modify the same part of a file differently.</td><td>Git pauses and asks you to resolve it manually.</td></tr>
+            <tr><td><strong>.gitignore</strong></td><td>A file specifying patterns of files Git should not track.</td><td>node_modules/, .env</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>For TaskFlow, we use a GitLab repository: <code>gitlab.com/yourname/taskflow</code>. We follow Trunk-Based Development:</p>
+          <ul>
+            <li>You branch off <code>main</code> to <code>feat/add-login</code>.</li>
+            <li>You push and open a Merge Request (MR).</li>
+            <li>GitLab CI sees the push and runs unit tests.</li>
+            <li>When merged to <code>main</code>, GitLab CI builds the Docker image and pushes it to the registry.</li>
+            <li>When you create a Tag <code>v1.2.0</code>, the pipeline deploys that version to production.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Create and switch to a new branch
+git switch -c feature/new-api</code></pre>
+          <div class="code-annotation">↑ Replaces the older `git checkout -b`. Creates the branch and moves HEAD to it.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># See a clean visual history of branches and commits
+git log --oneline --graph --all</code></pre>
+          <div class="code-annotation">↑ Highly recommended alias. Shows how branches diverge and merge visually in the terminal.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Create an annotated tag for a release
+git tag -a v1.0.0 -m "Initial Release"
+git push origin v1.0.0</code></pre>
+          <div class="code-annotation">↑ Annotated tags include author info and dates. Pushing tags requires explicit specification.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Committing Secrets (API Keys, Passwords)</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Never commit <code>.env</code> files. If you do, the secret is permanently in Git history even if you delete the file later. You must use tools like BFG Repo-Cleaner or git filter-branch to rewrite history to remove it.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: "Updates were rejected because the tip of your current branch is behind"</span>
+            <span class="ts-cause">Cause: Someone else pushed to the remote branch since you last pulled.</span>
+            <span class="ts-fix">Fix: Run <code>git pull --rebase</code> to apply their changes, then replay yours on top, then <code>git push</code>.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Accidentally committed to the wrong branch</span>
+            <span class="ts-cause">Cause: Forgot to create/switch branches before committing.</span>
+            <span class="ts-fix">Fix: <code>git reset HEAD~1 --soft</code> (undoes commit but keeps changes in staging), then switch to right branch, then commit.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Simulate a Pull Request Workflow</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Initialize a local repo: <code>git init demo</code> and <code>cd demo</code>.</li>
+            <li>Create an initial commit: <code>echo "v1" > file.txt && git add . && git commit -m "init"</code></li>
+            <li>Create a branch: <code>git switch -c feature/a</code>. Modify <code>file.txt</code>, add and commit.</li>
+            <li>Switch back to main: <code>git switch main</code>. Notice <code>file.txt</code> reverts to "v1".</li>
+            <li>Merge the branch: <code>git merge feature/a</code>. This will be a fast-forward merge.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between git fetch and git pull?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p><code>git fetch</code> downloads updates from the remote repo but does not integrate them into your working files. <code>git pull</code> is essentially <code>git fetch</code> followed immediately by <code>git merge</code>.</p></div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why should you not commit a node_modules/ or dist/ directory?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>They are generated artifacts. <code>node_modules</code> is huge and platform-dependent, and can be regenerated with <code>npm install</code>. Source control should only track source code.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="07-app-build-runtime.html" class="cross-link-chip">📦 App Build & Runtime</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>With source control mastered, the next step is understanding how to actually build and run the application code locally before we containerize it with Docker.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

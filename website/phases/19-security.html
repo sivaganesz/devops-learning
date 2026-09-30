@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 19: Security (DevSecOps) | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="18-monitoring.html" class="ctx-link">Phase 18: Monitoring</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 19: Security (DevSecOps)</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="20-advanced.html" class="ctx-link">Phase 20: Advanced DevOps</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 19</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">Security (DevSecOps)</h1>
+        <p class="page-subtitle">Integrate security into every phase of the CI/CD pipeline, implementing 'shift left' security, least privilege, and robust secrets management.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="14-kubernetes-config.html">Phase 15: Kubernetes Deployments</a></li>
+            <li><a href="10-cicd.html">Phase 16: CI/CD Pipelines</a></li>
+            <li><a href="11-cloud.html">Phase 11: Identity & Access Management</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How to securely manage secrets in Kubernetes and CI/CD</li>
+            <li>Applying the principle of least privilege using IAM and IRSA</li>
+            <li>Securing containers and clusters with Pod Security Standards</li>
+            <li>Implementing automated image and dependency scanning</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p><strong>DevSecOps</strong> (Development, Security, and Operations) is the philosophy of integrating security practices into the DevOps process. Instead of bolting security on at the very end of the software development lifecycle, DevSecOps makes security a shared responsibility for everyone.</p>
+          <p>A key concept here is <strong>shifting left</strong>. Imagine the software lifecycle as a timeline moving from left (development) to right (production). Shifting left means moving security checks, vulnerability scanning, and compliance testing as early in the timeline as possible. By catching security flaws during code commit or CI rather than in production, you save time, reduce costs, and drastically lower risk.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before (Traditional Security)</div>
+            <p>Security is checked only right before release. Hardcoded passwords are found in the Git repository months after being committed. Applications run as root containers. A single compromised pod gives attackers access to the entire cluster and all its secrets.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After (DevSecOps)</div>
+            <p>Developers are blocked from pushing code containing secrets. CI pipelines automatically scan Docker images for CVEs and fail if critical vulnerabilities exist. Containers run with minimal privileges. Secrets are securely managed by external tools and synced only when needed.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of DevSecOps like airport security. In the old days, you'd only get checked right before boarding the plane (a huge bottleneck). Today, there are checks at multiple layers: ID verification at check-in, TSA screening for bags, continuous surveillance, and finally a boarding pass check. DevSecOps implements these layered security checks throughout your software delivery pipeline.</p>
+          <div class="model-chain">
+            <span class="model-item">Code Commit</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">CI Scanning (SAST/Images)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Infrastructure Security (RBAC/IAM)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Runtime Security</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>DevSecOps spans multiple domains:</p>
+          <ul>
+            <li><strong>Secrets Management:</strong> Never store secrets (API keys, DB passwords) in Git, CI configs, or Docker images. Kubernetes Secrets are base64-encoded, not encrypted. Tools like HashiCorp Vault or AWS Secrets Manager handle storage and rotation, while operators like External Secrets Operator sync them securely into Kubernetes.</li>
+            <li><strong>IAM and Least Privilege:</strong> Every service should have only the permissions it needs. In Kubernetes on AWS, use IAM Roles for Service Accounts (IRSA) to grant specific pods access to specific AWS resources, rather than giving broad permissions to the entire worker node.</li>
+            <li><strong>Container Security:</strong> Avoid running containers as root. Drop unnecessary Linux capabilities, use read-only root filesystems, and leverage distroless images to reduce the attack surface.</li>
+            <li><strong>Image Scanning:</strong> Use tools like Trivy to scan container images and code dependencies for known vulnerabilities (CVEs) during the CI pipeline.</li>
+            <li><strong>Network Security:</strong> Implement Kubernetes Network Policies to enforce a "default deny" rule, explicitly allowing only necessary traffic. Use TLS for all communication.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">DEVSECOPS PIPELINE FLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Pre-commit</div>
+              <div class="flow-label">Secret Scanning</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">CI Pipeline</div>
+              <div class="flow-label">SAST & Dependency Check</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Image Build</div>
+              <div class="flow-label">Trivy Image Scan</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Kubernetes</div>
+              <div class="flow-label">Pod Security Standards</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">🔐</div>
+            <div class="concept-card-title">External Secrets</div>
+            <div class="concept-card-desc">An operator that reads information from external APIs (like AWS Secrets Manager) and automatically injects the values into Kubernetes Secrets.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🛡️</div>
+            <div class="concept-card-title">IRSA</div>
+            <div class="concept-card-desc">IAM Roles for Service Accounts. Allows you to associate an AWS IAM role with a Kubernetes Service Account, granting granular permissions to pods.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🔍</div>
+            <div class="concept-card-title">CVE</div>
+            <div class="concept-card-desc">Common Vulnerabilities and Exposures. A list of publicly disclosed cybersecurity vulnerabilities.</div>
+          </div>
+        </div>
+        <table class="term-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Description</th>
+              <th>Example Tools</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Container Scanning</td>
+              <td>Analyzing a Docker image for vulnerable packages or misconfigurations.</td>
+              <td>Trivy, Snyk, Clair</td>
+            </tr>
+            <tr>
+              <td>Network Policies</td>
+              <td>Rules controlling network traffic between pods in a Kubernetes cluster.</td>
+              <td>Calico, Cilium</td>
+            </tr>
+            <tr>
+              <td>SBOM</td>
+              <td>Software Bill of Materials; a list of all components and dependencies in your software.</td>
+              <td>Syft, Trivy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Securing the TaskFlow Architecture</h4>
+          </div>
+          <p>In our TaskFlow app:</p>
+          <ul>
+            <li>We store the <code>DATABASE_URL</code> and <code>JWT_SECRET</code> securely in AWS Secrets Manager, not in Git. The External Secrets Operator syncs them to Kubernetes.</li>
+            <li>Our backend Dockerfile uses a distroless base image and specifies <code>USER 1001</code> to avoid running as root.</li>
+            <li>Our GitLab CI pipeline runs <code>trivy image taskflow-api:latest</code> to catch critical vulnerabilities before pushing to the registry.</li>
+            <li>We apply a Kubernetes Network Policy that only allows traffic to the database from our backend pods, blocking all other access.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <p><strong>Running Trivy in CI/CD:</strong></p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash">trivy image --severity HIGH,CRITICAL taskflow-api:latest</code></pre>
+          <div class="code-annotation">↑ Scans the built image for HIGH and CRITICAL vulnerabilities and fails if any are found.</div>
+        </div>
+
+        <p><strong>Secure Pod Security Context:</strong></p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-backend
+spec:
+  template:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+      - name: backend
+        image: taskflow-api:1.2.0
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL</code></pre>
+          <div class="code-annotation">↑ Enforces least privilege on the container, preventing root access and modification of the filesystem.</div>
+        </div>
+        
+        <p><strong>Kubernetes Network Policy (Default Deny):</strong></p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: taskflow
+spec:
+  podSelector: {} # Selects all pods in the namespace
+  policyTypes:
+  - Ingress
+  - Egress</code></pre>
+          <div class="code-annotation">↑ Drops all ingress and egress traffic by default. You must create explicit allow rules for required traffic.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Storing secrets in plain base64 in a public Git repository.</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Base64 is encoding, not encryption. Anyone can decode it. Use Sealed Secrets, External Secrets, or a tool like SOPS to encrypt values before committing them.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Using the `latest` image tag in production.</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Image tags are mutable; an attacker could replace `latest` with a malicious image. Use specific version tags or, better yet, immutable SHA256 digests (e.g., `nginx@sha256:abc123...`).</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Container crashes immediately with "Read-only file system".</span>
+            <span class="ts-cause">Cause: The application is trying to write logs or temporary data to the root filesystem while `readOnlyRootFilesystem: true` is set.</span>
+            <span class="ts-fix">Fix: Mount an `emptyDir` volume to the specific directories where the app needs write access (like `/tmp`).</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Pods cannot connect to the database after applying a default deny NetworkPolicy.</span>
+            <span class="ts-cause">Cause: The NetworkPolicy is blocking egress traffic to the database pod or external IP.</span>
+            <span class="ts-fix">Fix: Create a targeted NetworkPolicy that explicitly allows egress from the backend pods to the database port.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Secure a Vulnerable Container</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a simple Dockerfile using an old, vulnerable base image (e.g., <code>FROM node:10</code>).</li>
+            <li>Install Trivy locally and scan the image: <code>trivy image my-vulnerable-app:latest</code>. Observe the high number of CVEs.</li>
+            <li>Update the Dockerfile to use a modern, distroless image or a current Alpine tag (e.g., <code>FROM node:18-alpine</code>).</li>
+            <li>Add a user block to run as non-root: <code>USER 1001</code>.</li>
+            <li>Rebuild and rescan the image with Trivy. Note the drastic reduction in vulnerabilities!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is committing a Kubernetes Secret YAML file directly to Git considered a security risk?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer">
+              <p>Kubernetes Secrets use base64 encoding, which provides no cryptographic security—it is easily decoded by anyone who has access to the repository. You must encrypt the secret using tools like Sealed Secrets or sync it from an external provider.</p>
+            </div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the purpose of setting `readOnlyRootFilesystem: true` in a pod's securityContext?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer">
+              <p>It mounts the container's root filesystem as read-only, preventing attackers who gain access to the container from modifying system binaries, installing malware, or altering application code at runtime.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="11-cloud.html" class="cross-link-chip">🔑 IAM</a>
+          <a href="14-kubernetes-config.html" class="cross-link-chip">☸️ Kubernetes Deployments</a>
+          <a href="10-cicd.html" class="cross-link-chip">🔄 CI/CD</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that our application is heavily secured from the code layer up to the infrastructure, we need to look at advanced rollout strategies and scaling. Next, we will explore advanced Kubernetes patterns like autoscaling and zero-downtime deployments.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <!-- RIGHT TOC -->
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+</body>
+</html>

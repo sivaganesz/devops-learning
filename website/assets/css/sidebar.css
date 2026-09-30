@@ -1,0 +1,300 @@
+/* ============================================================
+   DevOps Mastery — sidebar.css
+   Sidebar navigation, phase tree, topic items, progress indicators
+   ============================================================ */
+
+/* ---------------------------------------------------------------
+   Sidebar Container
+   --------------------------------------------------------------- */
+.sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  height: calc(100vh - var(--topbar-height));
+  position: sticky;
+  top: var(--topbar-height);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar inside sidebar */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ---------------------------------------------------------------
+   Sidebar Header (section labels)
+   --------------------------------------------------------------- */
+.sidebar-section-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+  user-select: none;
+}
+
+/* ---------------------------------------------------------------
+   Phase Group
+   --------------------------------------------------------------- */
+.phase-group {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+  transition: background var(--t-fast);
+  position: relative;
+}
+.phase-header:hover { background: var(--bg-hover); }
+
+/* Phase status icon */
+.phase-status {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border: 2px solid var(--border);
+  color: var(--txt-muted);
+  background: var(--bg-surface);
+  transition: all var(--t-fast);
+}
+.phase-status.status-done {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.phase-status.status-current {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Phase number badge */
+.phase-number {
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--txt-muted);
+  min-width: 24px;
+}
+
+/* Phase title */
+.phase-title {
+  flex: 1;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--txt-primary);
+  line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.phase-header:hover .phase-title { color: var(--txt-primary); }
+
+/* Chevron (expand/collapse indicator) */
+.phase-chevron {
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  color: var(--txt-muted);
+  transition: transform var(--t-fast);
+}
+.phase-group.expanded .phase-chevron {
+  transform: rotate(90deg);
+}
+
+/* Level dot */
+.phase-level-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--badge-begin);
+}
+.phase-level-dot.lvl-intermediate { background: var(--badge-inter); }
+.phase-level-dot.lvl-advanced     { background: var(--badge-adv); }
+
+/* ---------------------------------------------------------------
+   Phase Topic List (sub-items)
+   --------------------------------------------------------------- */
+.phase-topics {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+.phase-group.expanded .phase-topics {
+  max-height: 1000px;
+}
+
+.topic-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) 48px;
+  font-size: 0.8125rem;
+  color: var(--txt-secondary);
+  text-decoration: none;
+  border-radius: 0;
+  transition: background var(--t-fast), color var(--t-fast);
+  position: relative;
+  border-left: 2px solid transparent;
+}
+.topic-item:hover {
+  background: var(--bg-hover);
+  color: var(--txt-primary);
+  text-decoration: none;
+}
+
+/* Active page indicator */
+.topic-item.active {
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  color: var(--accent-bright);
+  font-weight: 500;
+}
+
+/* Visited indicator */
+.topic-item.visited::before {
+  content: '✓';
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  color: var(--accent);
+  width: 10px;
+}
+
+/* Current page indicator (arrow) */
+.topic-item.active::before {
+  content: '▶';
+  flex-shrink: 0;
+  font-size: 0.5rem;
+  color: var(--accent);
+  width: 10px;
+}
+
+/* ---------------------------------------------------------------
+   Sidebar Extras Section (Glossary, Search, etc.)
+   --------------------------------------------------------------- */
+.sidebar-extras {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding: var(--sp-2) 0;
+}
+
+.sidebar-extra-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  font-size: 0.8125rem;
+  color: var(--txt-secondary);
+  text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.sidebar-extra-item:hover {
+  background: var(--bg-hover);
+  color: var(--txt-primary);
+  text-decoration: none;
+}
+.sidebar-extra-item .extra-icon { font-size: 1rem; }
+.sidebar-extra-item.active {
+  color: var(--accent-bright);
+  background: var(--accent-dim);
+}
+
+/* ---------------------------------------------------------------
+   Overall progress mini-summary at top of sidebar
+   --------------------------------------------------------------- */
+.sidebar-progress-summary {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  color: var(--txt-muted);
+}
+.sidebar-progress-summary .sp-bar {
+  height: 3px;
+  background: var(--bg-surface-2);
+  border-radius: 2px;
+  margin-top: var(--sp-1);
+  overflow: hidden;
+}
+.sidebar-progress-summary .sp-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+/* ---------------------------------------------------------------
+   Page TOC (right column)
+   --------------------------------------------------------------- */
+.page-toc {
+  background: var(--bg-page);
+  border-left: 1px solid var(--border);
+  height: calc(100vh - var(--topbar-height));
+  position: sticky;
+  top: var(--topbar-height);
+  overflow-y: auto;
+  padding: var(--sp-6) var(--sp-4);
+}
+.page-toc::-webkit-scrollbar { width: 4px; }
+.page-toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.toc-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+  margin-bottom: var(--sp-3);
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.toc-list li { margin-bottom: 0; }
+
+.toc-link {
+  display: block;
+  padding: 3px 0 3px var(--sp-3);
+  font-size: 0.8rem;
+  color: var(--txt-secondary);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.toc-link:hover {
+  color: var(--txt-primary);
+  text-decoration: none;
+  border-left-color: var(--border);
+}
+.toc-link.toc-active {
+  color: var(--accent-bright);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.toc-link.toc-h3 {
+  padding-left: calc(var(--sp-3) + 12px);
+  font-size: 0.75rem;
+}

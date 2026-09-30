@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dockerfile & Compose | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="08-docker-core.html" class="ctx-link">Phase 08: Docker Core Concepts</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 09: Dockerfile & Compose</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="10-cicd.html" class="ctx-link">Phase 10: CI/CD with GitLab</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 09</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Dockerfile & Docker Compose</h1>
+        <p class="page-subtitle">Master the art of building optimized container images and orchestrating multi-container environments using Docker Compose.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Solid grasp of Docker concepts (<a href="08-docker-core.html">Phase 08</a>)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>Writing optimized, multi-stage Dockerfiles</li>
+            <li>Managing state with Docker Volumes</li>
+            <li>Networking containers together</li>
+            <li>Defining entire stacks with Docker Compose</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>A <strong>Dockerfile</strong> is a text document that contains all the commands a user could call on the command line to assemble an image. It's infrastructure as code for your application's environment.</p>
+          <p><strong>Docker Compose</strong> is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application's services (e.g., frontend, backend, database), networks, and volumes, allowing you to create and start the entire stack with a single command.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before Compose</div>
+            <p>To run an app requiring a DB and backend, you had to manually create a network, run the database container, figure out its IP, run the backend container passing the DB IP as an environment variable. Highly manual and error-prone.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After Compose</div>
+            <p>You define all relationships in one <code>docker-compose.yml</code> file. Running <code>docker compose up</code> automatically creates the network, starts the database, and starts the backend, linking them together seamlessly via DNS resolution.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model: The Architect and the Contractor</div>
+          <p class="mental-model-analogy">A <strong>Dockerfile</strong> is the blueprint for a single building (an image). <strong>Docker Compose</strong> is the city planner's map that shows how multiple buildings (services) connect via roads (networks) and where they share resources (volumes).</p>
+          <div class="model-chain">
+            <span class="model-item">App Code</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Dockerfile (Single Image)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Compose (Full Stack)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works (Volumes & Networks) -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works: Volumes & Networks</h2>
+        <div class="prose">
+          <h3>Docker Volumes: Persistent Data</h3>
+          <p>By default, data inside a container is lost when the container is removed. Volumes solve this:</p>
+          <ul>
+            <li><strong>Named Volumes:</strong> Managed by Docker, stored in Docker's internal directory on the host. Best for databases (e.g., PostgreSQL data).</li>
+            <li><strong>Bind Mounts:</strong> Maps a specific host directory to a container directory. Perfect for local development to sync code changes instantly.</li>
+          </ul>
+
+          <h3>Docker Networks: Container Communication</h3>
+          <p>Containers need to talk to each other. Docker uses software-defined networking:</p>
+          <ul>
+            <li><strong>Bridge Network:</strong> The default. Custom bridge networks provide automatic DNS resolution between containers using their container names.</li>
+            <li><strong>Host Network:</strong> Removes network isolation; the container uses the host's network.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Multi-Stage Build Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">MULTI-STAGE BUILD (TaskFlow Frontend)</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Stage 1: Node builder</div>
+              <div class="flow-label">npm install & build (Large)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Copy /dist</div>
+              <div class="flow-label">Discard node_modules</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Stage 2: Nginx Runner</div>
+              <div class="flow-label">Serve static files (Small)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Dockerfile Instructions</h2>
+        <table class="term-table">
+          <thead>
+            <tr>
+              <th>Instruction</th>
+              <th>Purpose</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>FROM</code></td>
+              <td>Base image to start from.</td>
+              <td><code>FROM node:20-alpine</code></td>
+            </tr>
+            <tr>
+              <td><code>WORKDIR</code></td>
+              <td>Sets the working directory inside container.</td>
+              <td><code>WORKDIR /app</code></td>
+            </tr>
+            <tr>
+              <td><code>COPY</code></td>
+              <td>Copies files from host into container.</td>
+              <td><code>COPY package.json ./</code></td>
+            </tr>
+            <tr>
+              <td><code>RUN</code></td>
+              <td>Executes shell commands during build.</td>
+              <td><code>RUN npm ci</code></td>
+            </tr>
+            <tr>
+              <td><code>CMD</code></td>
+              <td>Default command when container starts.</td>
+              <td><code>CMD ["npm", "start"]</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Optimizing our Images</h4>
+          </div>
+          <p>For the TaskFlow backend (NestJS), if we don't use multi-stage builds, our image includes the TypeScript compiler, devDependencies, and raw source code, making it over 1GB. By using multi-stage builds, we compile in stage 1, then only copy the compiled JS and production dependencies to stage 2, reducing the image size to under 200MB and vastly improving security.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <h3>TaskFlow Backend Dockerfile (Multi-stage)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">docker</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-docker"># Stage 1: Build
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Production
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+# Copy package files and install only prod deps
+COPY package*.json ./
+RUN npm ci --only=production
+# Copy compiled output from builder stage
+COPY --from=builder /app/dist ./dist
+USER node
+CMD ["node", "dist/main.js"]</code></pre>
+          <div class="code-annotation">↑ Multi-stage build for NestJS ensuring minimal attack surface and size.</div>
+        </div>
+
+        <h3>TaskFlow Docker Compose</h3>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: taskflow_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - taskflow_net
+
+  api:
+    build: 
+      context: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=taskflow
+      - DB_PASS=secretpassword
+    depends_on:
+      - db
+    networks:
+      - taskflow_net
+
+volumes:
+  pgdata:
+
+networks:
+  taskflow_net:</code></pre>
+          <div class="code-annotation">↑ Entire application stack managed in one file. Notice how `DB_HOST=db` resolves automatically.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Inefficient Layer Caching</div>
+          <p>Writing <code>COPY . .</code> before <code>RUN npm install</code>.</p>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Always copy <code>package.json</code> and run <code>npm install</code> BEFORE copying the rest of the source code. This ensures Docker uses the cached node_modules layer unless package.json changes.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Database container loses data on restart.</span>
+            <span class="ts-cause">Cause: You didn't map a volume for the database data directory.</span>
+            <span class="ts-fix">Fix: Add a volume mapping like <code>-v pgdata:/var/lib/postgresql/data</code>.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Container A cannot reach Container B.</span>
+            <span class="ts-cause">Cause: They are on different networks, or relying on IP instead of Compose service name DNS.</span>
+            <span class="ts-fix">Fix: Ensure both are on the same custom bridge network and use the service name as the hostname.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Caching Check</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a Dockerfile with <code>COPY . .</code> followed by <code>RUN npm install</code>. Build it.</li>
+            <li>Change a single line in a source file, and build again. Notice <code>npm install</code> runs entirely from scratch.</li>
+            <li>Modify the Dockerfile to copy <code>package.json</code>, run install, then copy source. Build twice with source changes. Notice the massive speedup!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is the `depends_on` flag in Docker Compose not enough to guarantee the DB is fully ready for the API?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p><code>depends_on</code> only ensures the database container starts before the API container. It does NOT wait for the database process inside (e.g., PostgreSQL) to finish its internal startup sequence and be ready to accept connections. You need healthchecks for robust startup ordering.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker Core</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>You can now package your applications efficiently. The next step is automating this process so your images are built, tested, and pushed to a registry automatically every time a developer commits code. Enter CI/CD with GitLab.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+      
+    </div>
+  </main>
+  
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

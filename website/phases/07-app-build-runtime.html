@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Build & Runtime | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="06-git.html" class="ctx-link">Phase 06: Git & Git Workflows</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 07: App Build & Runtime</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="08-docker-core.html" class="ctx-link">Phase 08: Docker Core</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 07</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">App Build & Runtime</h1>
+        <p class="page-subtitle">Understand how to compile, configure, and run modern applications natively before wrapping them in containers.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="05-networking.html">Phase 05: Networking Fundamentals</a> (Ports, HTTP)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>How React+Vite and NestJS applications are built for production.</li>
+            <li>The difference between dev mode and production runtime.</li>
+            <li>How Environment Variables behave differently in Frontend vs Backend.</li>
+            <li>How a production system handles ports and databases.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Every application has a lifecycle. It starts as raw source code (like TypeScript or JSX) that humans can read. Before it can be run in production, it often needs to be <strong>built</strong> (transpiled, bundled, minified) into artifacts. The <strong>runtime</strong> is the environment where these artifacts actually execute.</p>
+          <p>As a DevOps engineer, you must understand this process intimately. You cannot write a Dockerfile or a CI/CD pipeline if you don't know how the application is built natively.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Running <code>npm run dev</code> starts a heavy dev server, watches files for changes, includes debugging maps, and is slow and insecure. Environment variables are hardcoded.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>We run a build step to produce optimized artifacts in a <code>dist/</code> folder. The runtime starts quickly, uses environment variables for config, and connects efficiently to databases. This is ready for Docker.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of building an app like publishing a book. The source code is the author's rough draft with sticky notes (dev mode). The build process is the editor and printing press creating the final bound book (artifacts). The runtime is a reader actually opening the book and reading it (production execution).</p>
+          <div class="model-chain">
+            <span class="model-item">Source Code (.ts, .tsx)</span>
+            <span class="model-arrow">Build (Vite / tsc) →</span>
+            <span class="model-item model-focus">Artifacts (dist/)</span>
+            <span class="model-arrow">Execute (Nginx / Node) →</span>
+            <span class="model-item">Running Application</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>Frontend (React + Vite)</h3>
+          <p>In dev mode, Vite serves unbundled code and handles Hot Module Replacement (HMR). When you run <code>vite build</code>, Vite bundles everything into a <code>dist/</code> directory containing static HTML, CSS, and JS. In production, Vite is not running at all; you serve these static files using a web server like Nginx.</p>
+
+          <h3>Backend (NestJS + TypeScript)</h3>
+          <p>Node.js cannot run TypeScript natively. The build step (<code>tsc</code>) transpiles <code>.ts</code> files into standard JavaScript inside a <code>dist/</code> folder. The production runtime command is simply <code>node dist/main.js</code>. You use <code>npm ci --only=production</code> to install only runtime dependencies, skipping heavy dev packages.</p>
+
+          <h3>Environment Variables</h3>
+          <p>Follow the 12-factor app methodology: config belongs in the environment. In backend apps, <code>process.env.DATABASE_URL</code> is read dynamically at runtime. However, in frontend apps (Vite), variables prefixed with <code>VITE_</code> are <strong>baked into the static JS files during the build process</strong>. The browser has no concept of OS environment variables.</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">BACKEND BUILD AND RUNTIME FLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">git clone</div>
+              <div class="flow-label">Source code</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">npm ci</div>
+              <div class="flow-label">Install Deps</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">npm run build</div>
+              <div class="flow-label">Creates /dist</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Env Vars injected</div>
+              <div class="flow-label">.env or OS</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">node dist/main.js</div>
+              <div class="flow-label">Listens on 3000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Transpilation</strong></td><td>Converting source code from one language to another of similar abstraction.</td><td>TypeScript to JavaScript</td></tr>
+            <tr><td><strong>Artifact</strong></td><td>The deployable output of the build process.</td><td>The <code>dist/</code> folder</td></tr>
+            <tr><td><strong>npm ci</strong></td><td>Clean install. Uses package-lock.json strictly. Faster and deterministic.</td><td>Used in CI/CD instead of npm install</td></tr>
+            <tr><td><strong>Connection Pool</strong></td><td>Maintaining open database connections for reuse, rather than opening a new one per request.</td><td>PostgreSQL pg pool</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>To run the TaskFlow stack fully:</p>
+          <ul>
+            <li><strong>Database:</strong> Needs to be running on port 5432. We run migrations to build tables.</li>
+            <li><strong>Backend:</strong> We run <code>npm run build</code>, provide <code>DATABASE_URL</code> via environment, and run <code>node dist/main.js</code> on port 3000. It needs a <code>/health</code> endpoint for production monitoring.</li>
+            <li><strong>Frontend:</strong> We build with <code>VITE_API_URL=http://localhost:3000</code>. Then we serve the <code>dist/</code> folder using Nginx on port 80.</li>
+            <li><strong>CORS:</strong> Because dev frontend (5173) and backend (3000) are different origins, the backend must be configured to allow CORS during development.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Production build and run for a Node.js Backend
+npm ci
+npm run build
+npm ci --only=production
+NODE_ENV=production node dist/main.js</code></pre>
+          <div class="code-annotation">↑ Installs all deps to build, builds, prunes dev dependencies, then runs the built artifact.</div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Example PostgreSQL Connection String format used in ENV vars
+DATABASE_URL=postgresql://taskflow_user:secret123@localhost:5432/taskflow_db</code></pre>
+          <div class="code-annotation">↑ Format: protocol://user:password@host:port/database</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Using a Dev Server in Production</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Never run <code>npm run dev</code> or <code>vite</code> in production. It is not optimized, lacks security features, and is highly inefficient. Always build to static artifacts and serve with Nginx (Frontend) or run the transpiled JS with node (Backend).</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Frontend in production tries to call API at "localhost"</span>
+            <span class="ts-cause">Cause: VITE_API_URL was set to localhost during the build step. Remember frontend vars are baked in at build time!</span>
+            <span class="ts-fix">Fix: Rebuild the frontend providing the correct production API URL.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Backend fails to start with "Cannot find module 'dist/main.js'"</span>
+            <span class="ts-cause">Cause: You tried to run the app without running the build step first.</span>
+            <span class="ts-fix">Fix: Run <code>npm run build</code> (which executes tsc) before trying to start.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Inspect Build Artifacts</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a dummy Vite app: <code>npm create vite@latest test-app -- --template react-ts</code>.</li>
+            <li>Run <code>npm install</code> then <code>npm run build</code>.</li>
+            <li>Inspect the newly created <code>dist/</code> folder. Open the JS file and notice it is minified and unreadable.</li>
+            <li>Try to run it with a static file server: <code>npx serve -s dist</code> and open it in a browser.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why should you use 'npm ci' instead of 'npm install' in a CI/CD pipeline?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p><code>npm ci</code> strictly follows package-lock.json and will fail if it's out of sync. It is faster because it bypasses package resolution and guarantees exact identical dependency versions.</p></div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why do frontend environment variables need to be present at build time, while backend ones are needed at runtime?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Frontend code runs in the user's browser, which has no access to your server's environment variables. Therefore, build tools (like Vite) must inject the variable values directly into the static JS files during the build process.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker Core</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that we fully understand how an app is built and run locally, we are ready to package this entire process into a reproducible container using Docker.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

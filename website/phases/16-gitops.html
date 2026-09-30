@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 16: GitOps & Argo CD | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="15-helm.html" class="ctx-link">Phase 15: Helm</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 16: GitOps & Argo CD</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="17-terraform.html" class="ctx-link">Phase 17: Terraform & IaC</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 16</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">GitOps & Argo CD</h1>
+        <p class="page-subtitle">Adopt the GitOps operational model to manage your Kubernetes applications declaratively via Git, using Argo CD.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="15-helm.html">Phase 15: Helm</a> (Packaging Kubernetes apps)</li>
+            <li><a href="10-cicd.html">Phase 10: CI/CD Pipelines</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The 4 core principles of GitOps</li>
+            <li>The pull vs push model for cluster deployments</li>
+            <li>How Argo CD detects and corrects configuration drift</li>
+            <li>How to implement the Two-Repo pattern for app delivery</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>GitOps is an operational model where Git is the single source of truth for the desired state of your infrastructure and applications. All changes to the cluster happen via Git commits. You never run <code>kubectl apply</code> or <code>helm upgrade</code> manually. Instead, software agents running in the cluster continuously pull the desired state from Git and apply it.</p>
+          <p>The four GitOps principles are: Declarative, Versioned and immutable, Pulled automatically, and Continuously reconciled.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before GitOps (Push Deployments)</div>
+            <p>Your CI pipeline builds an image and runs <code>helm upgrade</code> directly against the production cluster. This means CI needs highly privileged cluster credentials. Furthermore, if someone manually edits a Deployment in the cluster, configuration drift accumulates because Git and the cluster no longer match. There is no easy audit trail of who changed what in the cluster.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After GitOps (Pull Deployments)</div>
+            <p>Your CI pipeline only updates a Helm value in a Git repository. Argo CD (running inside the cluster) detects the Git commit, pulls the new configuration, and applies it. CI has no cluster access. If someone manually changes a resource, Argo CD detects the drift and immediately rolls it back to match Git.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of a thermostat. You set the desired temperature (Git). The room has an actual temperature (Kubernetes cluster state). The thermostat (Argo CD) constantly monitors both and activates the heater or AC (syncs) until the actual state matches the desired state.</p>
+          <div class="model-chain">
+            <span class="model-item">Git Repo (Desired State)</span>
+            <span class="model-arrow">← observed by →</span>
+            <span class="model-item model-focus">Argo CD (Reconciler)</span>
+            <span class="model-arrow">← manipulates →</span>
+            <span class="model-item">Kubernetes (Actual State)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>Argo CD is a Kubernetes controller. You install it into your cluster, and it watches specific Git repositories that you configure via <code>Application</code> CRDs (Custom Resource Definitions).</p>
+          <p>When Argo CD sees that the live state in the cluster differs from the desired state in Git, it marks the application as <strong>OutOfSync</strong>. Depending on your configuration, it will either wait for you to manually trigger a sync, or it will automatically apply the changes.</p>
+          <h3>Two-Repo Pattern</h3>
+          <p>Best practice dictates separating your application source code from your deployment manifests:</p>
+          <ul>
+            <li><strong>App Repo:</strong> Contains source code, Dockerfile, and CI pipeline (runs tests, builds image, pushes to registry, then updates the GitOps repo).</li>
+            <li><strong>GitOps Repo:</strong> Contains only Kubernetes manifests or Helm charts/values. This is what Argo CD watches.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">GITOPS CI/CD WORKFLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Dev</div>
+              <div class="flow-label">Commits Code</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">CI Pipeline</div>
+              <div class="flow-label">Builds Image</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">GitOps Repo</div>
+              <div class="flow-label">Updates image tag</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Argo CD</div>
+              <div class="flow-label">Pulls changes</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Kubernetes</div>
+              <div class="flow-label">Updates Pods</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Declarative</td><td>Saying 'I want 3 replicas', rather than 'add 1 replica'.</td><td>Kubernetes YAML</td></tr>
+            <tr><td>Drift</td><td>When the cluster's actual state diverges from Git's desired state.</td><td>Manual edit via kubectl</td></tr>
+            <tr><td>Application (Argo)</td><td>Defines a source Git repo/path and a destination cluster/namespace.</td><td>TaskFlow Prod App</td></tr>
+            <tr><td>Self-heal</td><td>Argo CD feature that automatically reverts manual cluster changes.</td><td>Enabled in App spec</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>TaskFlow GitOps Deployment</h4>
+          </div>
+          <p>We create a new repository: <code>gitlab.com/yourname/taskflow-gitops</code>. Inside, we store our Helm <code>values.yaml</code> for staging and production. The TaskFlow App CI pipeline builds the Docker image and then runs a script to update the image tag in the GitOps repo and commit it. Argo CD, running in our AWS EKS cluster, detects the commit and syncs the new image to the <code>taskflow</code> namespace.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <p>An Argo CD Application definition (declarative setup):</p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: taskflow-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://gitlab.com/yourname/taskflow-gitops.git'
+    targetRevision: HEAD
+    path: production
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: taskflow-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true</code></pre>
+          <div class="code-annotation">↑ Tells Argo CD to watch the GitOps repo and sync it to taskflow-prod, enabling self-healing.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Fighting Self-Heal</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> If you have CI pushing directly to the cluster AND Argo CD syncing from Git with self-heal enabled, they will fight constantly. CI should only update Git; let Argo CD update the cluster.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: App stuck in 'Syncing' or 'OutOfSync'</span>
+            <span class="ts-cause">Cause: Kubernetes API rejected the resource (e.g., invalid YAML, missing CRDs).</span>
+            <span class="ts-fix">Fix: Check the Argo CD UI logs or use <code>argocd app get app-name</code> to find the specific resource error.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Argo CD cannot access Git repository</span>
+            <span class="ts-cause">Cause: Missing or incorrect authentication.</span>
+            <span class="ts-fix">Fix: Ensure you've added the correct SSH private key or access token to Argo CD's repository credentials.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Install and Use Argo CD</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Install Argo CD: <code>kubectl create namespace argocd</code> then apply the manifest from Argo's official docs.</li>
+            <li>Port-forward the UI: <code>kubectl port-forward svc/argocd-server -n argocd 8080:443</code>.</li>
+            <li>Create an App from a public repo (like <code>argoproj/argocd-example-apps</code>).</li>
+            <li>Observe the sync process.</li>
+            <li>Manually edit a deployment in the cluster (e.g., change replica count) and watch Argo CD's self-heal revert your change.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>How do you roll back an application in a GitOps workflow?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>You use <code>git revert</code> on the commit that introduced the bad change in your GitOps repository. Once the revert is pushed to Git, Argo CD detects it and automatically syncs the cluster back to the previous state.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="15-helm.html" class="cross-link-chip">☸️ Helm Charts</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>GitOps handles application deployments beautifully. But how did we get the Kubernetes cluster, the database, and the networking in the first place? Next, we will cover <strong>Terraform</strong>, which brings the declarative "as code" approach to infrastructure provisioning.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

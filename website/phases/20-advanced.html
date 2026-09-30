@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 20: Advanced DevOps | DevOps Mastery</title>
+  <script>
+    // Apply theme before paint to prevent flash
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="19-security.html" class="ctx-link">Phase 19: Security</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 20: Advanced DevOps</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="21-project.html" class="ctx-link">Phase 21: End-to-End Project</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 20</span>
+          <span class="level-badge advanced">Advanced</span>
+        </div>
+        <h1 class="page-title">Advanced DevOps</h1>
+        <p class="page-subtitle">Master autoscaling at multiple levels, zero-downtime deployment strategies, HA architecture, and core SRE fundamentals to run reliable systems.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="14-kubernetes-config.html">Phase 15: Kubernetes Deployments</a></li>
+            <li><a href="18-monitoring.html">Phase 18: Monitoring</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>HPA, VPA, and Cluster Autoscaler/Karpenter</li>
+            <li>Blue/Green, Canary, and Rolling deployment strategies</li>
+            <li>High Availability (HA) and Disaster Recovery (DR)</li>
+            <li>SRE principles: SLIs, SLOs, and Error Budgets</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p><strong>Advanced DevOps</strong> moves beyond simply getting an application to run, focusing entirely on resilience, scalability, and operational excellence at scale. It incorporates site reliability engineering (SRE) practices to ensure systems remain fast and highly available during unpredictable traffic spikes and complex updates.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Traffic spikes cause application crashes. Deployments involve manual scripts, causing 10 minutes of downtime for users. Database outages lead to massive data loss. Teams operate on gut feelings rather than metrics.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>The cluster automatically adds nodes and pods when traffic surges. Deployments route 5% of traffic to the new version automatically verifying health. The database has a hot standby. SLIs and error budgets dictate release velocity.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of advanced operations like a modern transit system. Autoscaling is like adding trains dynamically during rush hour. Deployment strategies are like repairing tracks while keeping the trains running on alternate paths. SRE metrics (SLOs) are the schedules ensuring the trains are on time 99.9% of the day.</p>
+          <div class="model-chain">
+            <span class="model-item">Deploy App</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Monitor Metrics</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Autoscale & Rollout (you are here)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Maintain SLOs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p><strong>Autoscaling has three primary dimensions in Kubernetes:</strong></p>
+          <ul>
+            <li><strong>HPA (Horizontal Pod Autoscaler):</strong> Adds or removes Pod replicas based on CPU, memory, or custom metrics (e.g., requests per second).</li>
+            <li><strong>VPA (Vertical Pod Autoscaler):</strong> Adjusts the CPU/memory requests and limits of existing Pods based on historical usage.</li>
+            <li><strong>Cluster Autoscaler & Karpenter:</strong> Add or remove actual compute nodes (EC2 instances) when Pods cannot be scheduled due to lack of resources.</li>
+          </ul>
+          <p><strong>Deployment Strategies:</strong></p>
+          <ul>
+            <li><strong>Rolling Update (default):</strong> Gradually replace old pods with new pods. Zero downtime, but both versions coexist temporarily.</li>
+            <li><strong>Blue/Green:</strong> Stand up a completely new environment (green), test it, and instantly flip the load balancer traffic to it. Easy rollback.</li>
+            <li><strong>Canary:</strong> Slowly route a small percentage (e.g., 5%) of traffic to the new version. Monitor metrics, then gradually increase to 100%. Argo Rollouts is popular for this.</li>
+          </ul>
+          <p><strong>SRE Fundamentals:</strong></p>
+          <ul>
+            <li><strong>SLI (Service Level Indicator):</strong> A metric you measure (e.g., HTTP 5xx error rate).</li>
+            <li><strong>SLO (Service Level Objective):</strong> Your target (e.g., 99.9% of requests must succeed over 30 days).</li>
+            <li><strong>Error Budget:</strong> The allowed failure rate (e.g., 0.1%). If you burn through it, you stop releasing features and focus purely on reliability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">CANARY DEPLOYMENT FLOW</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Deploy V2</div>
+              <div class="flow-label">0% Traffic</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Canary Phase 1</div>
+              <div class="flow-label">5% Traffic</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Analyze Metrics</div>
+              <div class="flow-label">SLIs Healthy?</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Promote</div>
+              <div class="flow-label">100% Traffic</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">📈</div>
+            <div class="concept-card-title">KEDA</div>
+            <div class="concept-card-desc">Kubernetes Event-Driven Autoscaling. Allows scaling pods based on external metrics like AWS SQS queue length or database connections. Can scale to zero.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🔄</div>
+            <div class="concept-card-title">Pod Disruption Budget (PDB)</div>
+            <div class="concept-card-desc">Ensures a minimum number of replicas are always available during voluntary disruptions like node upgrades or evictions.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🚧</div>
+            <div class="concept-card-title">Toil</div>
+            <div class="concept-card-desc">Manual, repetitive, automatable work. SREs aim to eliminate toil so they can focus on engineering improvements.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Advanced Operations for TaskFlow</h4>
+          </div>
+          <p>For the TaskFlow production environment:</p>
+          <ul>
+            <li>We configure an <strong>HPA</strong> on the <code>taskflow-api</code> deployment to scale up to 10 replicas if CPU usage exceeds 70%.</li>
+            <li>We define a <strong>PDB (Pod Disruption Budget)</strong> specifying <code>minAvailable: 2</code> so cluster upgrades never take the API fully offline.</li>
+            <li>We implement a <strong>preStop hook</strong> in our API containers that sleeps for 5 seconds to allow the ALB to cleanly drain connections before the container terminates, achieving true zero-downtime deployments.</li>
+            <li>We set an <strong>SLO</strong> that 99.9% of API requests must return in under 500ms.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        
+        <p><strong>Horizontal Pod Autoscaler (HPA) YAML:</strong></p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: taskflow-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: taskflow-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70</code></pre>
+          <div class="code-annotation">↑ Scales the taskflow-api deployment between 2 and 10 pods to keep average CPU utilization around 70%. (Requires metrics-server)</div>
+        </div>
+
+        <p><strong>Zero-Downtime Deployment Tweaks:</strong></p>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  template:
+    spec:
+      containers:
+      - name: api
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 5"]</code></pre>
+          <div class="code-annotation">↑ Ensures no pods go unavailable during a rolling update, and introduces a sleep on shutdown to let the load balancer catch up.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Using HPA without setting resource requests on the Pods.</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> The HPA calculates CPU utilization as a percentage of the Pod's requested CPU. If requests aren't set, HPA cannot calculate the metric and will fail to scale. Always set `resources.requests.cpu`.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Mistake: Breaking database schema changes during a rolling update.</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> In a rolling update, V1 and V2 of the code run simultaneously. DB migrations must be backward-compatible (e.g., add a column but don't delete the old one yet) so both code versions work.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: HPA shows `&lt;unknown&gt;/70%` for metrics and doesn't scale.</span>
+            <span class="ts-cause">Cause: The Metrics Server is not installed in the cluster, or the Pod lacks resource requests.</span>
+            <span class="ts-fix">Fix: Install Metrics Server and ensure `resources.requests` is defined in the Deployment.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Cluster Autoscaler is not spinning up new nodes when pods are Pending.</span>
+            <span class="ts-cause">Cause: The node group's maximum size limit has been reached, or IAM permissions are missing.</span>
+            <span class="ts-fix">Fix: Check the Auto Scaling Group max capacity limits in AWS and verify the cluster autoscaler pod logs.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Configure and Trigger an HPA</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Deploy a sample Nginx deployment with `requests.cpu: 100m`.</li>
+            <li>Apply an HPA targeting 50% CPU utilization.</li>
+            <li>Use a load generator tool like <code>hey</code> or run a busybox pod with a `while true` loop hitting the Nginx service to spike CPU usage.</li>
+            <li>Run <code>kubectl get hpa -w</code> and watch the replica count scale up as the metric exceeds the target.</li>
+            <li>Stop the load and observe the HPA scale the replicas back down (after a cooldown period).</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>What is the difference between a Canary deployment and Blue/Green?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer">
+              <p>Blue/Green routes 100% of traffic instantly from the old version to the fully deployed new version. Canary routes a small percentage of traffic (e.g., 5%) to the new version initially, tests for regressions, and gradually increases traffic, minimizing the blast radius.</p>
+            </div>
+          </div>
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why is a preStop hook important for zero-downtime deployments?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer">
+              <p>When Kubernetes terminates a pod, it sends a SIGTERM to the container while simultaneously updating the service endpoints. A preStop sleep ensures the application stays alive long enough to finish processing active requests and allows the load balancer time to remove the pod from rotation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="14-kubernetes-config.html" class="cross-link-chip">☸️ Kubernetes</a>
+          <a href="18-monitoring.html" class="cross-link-chip">📊 Monitoring</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>You have now learned the complete foundation of DevOps, Security, and Advanced Operations. It is time for the capstone. Next, we will piece everything together and build the entire TaskFlow architecture from local development all the way to a secure, highly available production deployment.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <!-- RIGHT TOC -->
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+</body>
+</html>

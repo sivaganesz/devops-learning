@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 04 — Shell & Bash Scripting | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="03-linux.html" class="ctx-link">Phase 03: Linux</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 04: Shell Scripting</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="05-networking.html" class="ctx-link">Phase 05: Networking</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 04</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">Shell & Bash Scripting</h1>
+        <p class="page-subtitle">Automate server tasks, write robust health checks, and build the foundation of CI/CD pipelines.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="03-linux.html">Phase 03: Linux Essentials</a> (Command line, file permissions, basic commands)</li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>Writing Bash scripts (variables, loops, conditionals)</li>
+            <li>Handling exit codes and script robustness (set -euo pipefail)</li>
+            <li>Special variables ($1, $?, $@) and text manipulation</li>
+            <li>Creating real-world DevOps scripts (health checks, deployment wrappers)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>A shell script is a text file containing a sequence of commands for a UNIX-based operating system. <strong>Bash (Bourne Again SHell)</strong> is the default and most widely used shell in Linux.</p>
+          <p>While modern DevOps uses tools like Ansible or Terraform for heavy lifting, at the lowest level, <em>everything</em> relies on Bash. Every job step in a GitLab CI/CD pipeline or GitHub Actions workflow is ultimately executed as a Bash script on a runner.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>A human logs into a server and types 15 different commands sequentially to backup a database, pull code, and restart services. If they make a typo on command #12, the system breaks.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>A single automated script runs those 15 commands. It handles errors gracefully, can be reviewed via Pull Request, and executed exactly the same way across Development, Staging, and Production environments.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model (for complex topics) -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of a shell script like a recipe for a kitchen robot. You cannot just say "Bake a cake" (like you might with Terraform). You must provide the exact sequential instructions: "Get bowl. Add 2 eggs. Mix. If egg drops on floor, stop immediately and alert chef."</p>
+          <div class="model-chain">
+            <span class="model-item">Trigger (CI/CD / Cron)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Bash Interpreter (/bin/bash)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Sequential Command Execution</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Exit Code (0 or 1)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <h3>The Shebang</h3>
+          <p>Every script starts with a <strong>shebang</strong> <code>#!/bin/bash</code> or <code>#!/usr/bin/env bash</code>. This tells the OS which interpreter to use when executing the file.</p>
+          
+          <h3>Variables & Special Variables</h3>
+          <p>Variables do not have spaces around the equals sign: <code>NAME="TaskFlow"</code>. Always double quote variables when using them: <code>echo "$NAME"</code> to prevent word splitting.</p>
+          <ul>
+            <li><code>$0</code>: The name of the script itself.</li>
+            <li><code>$1, $2, etc.</code>: Positional arguments passed to the script.</li>
+            <li><code>$?</code>: The exit code of the LAST executed command. (0 means success).</li>
+          </ul>
+
+          <h3>Exit Codes and Safety (Strict Mode)</h3>
+          <p>By default, Bash will keep running even if a command fails! For DevOps, this is dangerous. We always add <code>set -euo pipefail</code> at the top of our scripts:</p>
+          <ul>
+            <li><code>-e</code>: Exit immediately if any command returns a non-zero exit status.</li>
+            <li><code>-u</code>: Treat unset variables as an error and exit immediately.</li>
+            <li><code>-o pipefail</code>: If any command in a pipeline fails (e.g., <code>bad_cmd | grep foo</code>), the whole pipeline fails, rather than just returning the exit code of the last command.</li>
+          </ul>
+
+          <h3>Conditionals & Loops</h3>
+          <p>Use <code>[[ ]]</code> for conditionals instead of the older <code>[ ]</code>, as it handles strings safely. Common flags: <code>-z</code> (string is empty), <code>-f</code> (file exists), <code>-d</code> (directory exists).</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">SCRIPT ERROR HANDLING (set -e)</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">Cmd 1: mkdir tmp</div>
+              <div class="flow-label">Exit 0</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Cmd 2: apt instl typo</div>
+              <div class="flow-label">Exit 100 (FAIL)</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Cmd 3: rm tmp</div>
+              <div class="flow-label">NEVER REACHED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Exit Code</td><td>Numeric code returned by a command to the OS</td><td><code>0</code> (success), <code>1-255</code> (errors)</td></tr>
+            <tr><td>Command Substitution</td><td>Capture the output of a command into a variable</td><td><code>DATE=$(date +%Y)</code></td></tr>
+            <tr><td>Heredoc</td><td>Format for multi-line strings/files</td><td><code>cat &lt;&lt;EOF > file.txt</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>CI/CD Pipeline Jobs are Scripts</h4>
+          </div>
+          <p>In our <code>.gitlab-ci.yml</code> file, the deployment job literally executes Bash commands on the runner. We will write a deployment verification script that polls the TaskFlow API <code>/health</code> endpoint to ensure the new deployment actually started successfully before marking the CI job as passed.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash">#!/usr/bin/env bash
+set -euo pipefail # The DevOps standard
+
+URL="http://localhost:3000/health"
+MAX_RETRIES=5
+
+echo "Starting health check for $URL"
+
+for ((i=1; i<=MAX_RETRIES; i++)); do
+    # curl -s (silent), -o /dev/null (discard output), -w "%{http_code}" (print status)
+    STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo "failed")
+    
+    if [[ "$STATUS" == "200" ]]; then
+        echo "✅ Service is healthy!"
+        exit 0
+    fi
+    
+    echo "Attempt $i/$MAX_RETRIES: Status was $STATUS. Retrying in 2 seconds..."
+    sleep 2
+done
+
+echo "❌ Service failed to become healthy."
+exit 1</code></pre>
+          <div class="code-annotation">↑ A robust health-check polling script. This is how CI systems know a deployment finished.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Forgetting to quote variables</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Always use <code>"$VAR"</code>. If $VAR contains spaces (e.g., "File name.txt") and you run <code>rm $VAR</code>, bash will try to delete two files: "File" and "name.txt". <code>rm "$VAR"</code> deletes the correct file.</div>
+        </div>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Not making the script executable</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> You must run <code>chmod +x script.sh</code> before you can run it via <code>./script.sh</code>.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Script behaves weirdly or variables are blank, but no errors show up.</span>
+            <span class="ts-cause">Cause: The script is silently continuing on errors and unbound variables.</span>
+            <span class="ts-fix">Fix: Add <code>set -euo pipefail</code> at the top. Run with <code>bash -x script.sh</code> to see an execution trace line-by-line.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Write an Environment Validator</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Create a script called <code>check_env.sh</code> and make it executable.</li>
+            <li>Use a <code>for</code> loop to iterate over an array of required variable names (e.g., DB_HOST, DB_USER, DB_PASS).</li>
+            <li>For each variable, check if it is set (using <code>-z "${!VAR:-}"</code>).</li>
+            <li>If any are missing, print an error and exit with code 1. If all exist, print "Ready" and exit 0.</li>
+            <li>Test it by running <code>./check_env.sh</code> and then <code>DB_HOST=localhost DB_USER=admin DB_PASS=123 ./check_env.sh</code>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why do we return exit code 1 instead of returning a string "Error" when a script fails?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>In UNIX, return values (stdout strings) are meant for data passing. The Exit Code is a standard OS-level signal. CI/CD pipelines (like GitLab or Jenkins) exclusively read the Exit Code (0 = pass, !=0 = fail) to determine if the pipeline job succeeded.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="03-linux.html" class="cross-link-chip">🐧 Linux Essentials</a>
+          <a href="10-cicd.html" class="cross-link-chip">🔄 CI/CD Pipelines</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that we can manipulate the local system using Linux commands and automate tasks with Bash, we need to understand how these servers communicate with each other. In Phase 05, we dive into Networking: IPs, DNS, and Firewalls.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

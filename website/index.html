@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Mastery | From Zero to Production Engineer</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sidebar.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <div class="page-header">
+        <h1 class="page-title">DevOps Mastery</h1>
+        <p class="page-subtitle">From zero to production engineer — a structured, project-driven DevOps curriculum</p>
+        <p>Welcome to DevOps Mastery. This curriculum is designed to take you from the absolute basics of systems administration to managing complex cloud-native architectures. You will learn by building, deploying, and maintaining a real-world application called TaskFlow.</p>
+      </div>
+
+      <div class="content-section">
+        <h2 id="how-to-use" class="section-title"><span class="section-icon">📘</span> How to use this site</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">1️⃣</div>
+            <div class="concept-card-title">Study in order</div>
+            <div class="concept-card-desc">The phases are carefully sequenced. Each phase builds directly on the previous one.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🛠️</div>
+            <div class="concept-card-title">Follow TaskFlow project</div>
+            <div class="concept-card-desc">We use a consistent sample app throughout to provide realistic, interconnected examples.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">📈</div>
+            <div class="concept-card-title">Track your progress</div>
+            <div class="concept-card-desc">Use the progress tracker at the top. Complete exercises to reinforce your learning.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> The TaskFlow Project</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>Throughout this curriculum, we will use the <strong>TaskFlow</strong> application. It is a real-world 3-tier web application consisting of:</p>
+          <ul>
+            <li><strong>Frontend:</strong> React + Vite (port 5173 dev, builds to static files)</li>
+            <li><strong>Backend:</strong> NestJS on Node.js (port 3000)</li>
+            <li><strong>Database:</strong> PostgreSQL (port 5432)</li>
+          </ul>
+          <p>We will start by running it on a single Linux VM, then containerize it with Docker, build automated CI/CD pipelines in GitLab, deploy it to AWS EKS (Kubernetes) using Helm and Argo CD, and finally monitor it with Prometheus and Grafana.</p>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Real-World Architecture</h2>
+        <p>Here is a bird's-eye view of the complete architecture you will build by the end of this curriculum.</p>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">COMPLETE DEVOPS STACK</div>
+          <div class="flow-h">
+            <div class="flow-node"><a href="phases/03-linux.html" class="flow-box">Developer</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/06-git.html" class="flow-box">GitLab (Git)</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/10-cicd.html" class="flow-box flow-box-accent">CI Pipeline</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/09-docker-advanced.html" class="flow-box">Docker Build</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/09-docker-advanced.html" class="flow-box">Registry</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/16-gitops.html" class="flow-box flow-box-accent">Argo CD</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/12-kubernetes-core.html" class="flow-box">AWS EKS</a></div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node"><a href="phases/18-monitoring.html" class="flow-box">Prometheus</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 id="roadmap" class="section-title"><span class="section-icon">🗺️</span> Complete Roadmap</h2>
+        <div class="roadmap-grid">
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 01</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/03-linux.html">Linux Basics</a></h3>
+            <p>Master the CLI, file systems, and user permissions.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 02</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/03-linux.html">Linux Processes & Networking</a></h3>
+            <p>Understand daemons, signals, and basic networking concepts.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 03</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/08-docker-core.html">Docker Fundamentals</a></h3>
+            <p>Introduction to containers, images, and runtimes.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 04</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/09-docker-advanced.html">Building Docker Images</a></h3>
+            <p>Writing Dockerfiles, multi-stage builds, and optimizations.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 05</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/09-docker-advanced.html">Docker Compose</a></h3>
+            <p>Managing multi-container applications locally.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 06</span>
+            <span class="level-badge lvl-beginner">Beginner</span>
+            <h3><a href="phases/06-git.html">Git Version Control</a></h3>
+            <p>Branching, merging, rebasing, and collaborative workflows.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 07</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/10-cicd.html">CI/CD Pipelines</a></h3>
+            <p>Building automated continuous integration workflows.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 08</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/09-docker-advanced.html">Container Registries</a></h3>
+            <p>Storing, tagging, and distributing Docker images securely.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 09</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/12-kubernetes-core.html">Kubernetes Basics</a></h3>
+            <p>Cluster architecture, Pods, Deployments, and Services.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 10</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/14-kubernetes-config.html">Kubernetes Storage</a></h3>
+            <p>PersistentVolumes, PVCs, and StatefulSets.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 11</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/13-kubernetes-networking.html">Kubernetes Networking</a></h3>
+            <p>Ingress, Ingress Controllers, and Network Policies.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 12</span>
+            <span class="level-badge lvl-intermediate">Intermediate</span>
+            <h3><a href="phases/15-helm.html">Helm Package Manager</a></h3>
+            <p>Templating Kubernetes manifests and managing releases.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 13</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/17-terraform.html">Infrastructure as Code (Terraform)</a></h3>
+            <p>Provisioning cloud infrastructure declaratively.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 14</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/16-gitops.html">GitOps with Argo CD</a></h3>
+            <p>Automated deployment and drift reconciliation.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 15</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/11-cloud.html">AWS EKS & Cloud Services</a></h3>
+            <p>Managed Kubernetes, VPCs, IAM, and cloud integrations.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 16</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/18-monitoring.html">Prometheus Monitoring</a></h3>
+            <p>Metrics collection, PromQL, and alerting.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 17</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/18-monitoring.html">Grafana Dashboards</a></h3>
+            <p>Visualizing metrics and building observable systems.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 18</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/18-monitoring.html">Centralized Logging (EFK)</a></h3>
+            <p>Elasticsearch, Fluentd, and Kibana log aggregation.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 19</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/19-security.html">DevSecOps & Security</a></h3>
+            <p>Image scanning, RBAC, Secrets management, and compliance.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 20</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/20-advanced.html">Scaling & Performance</a></h3>
+            <p>HPA, Cluster Autoscaler, and performance tuning.</p>
+          </div>
+          <div class="roadmap-phase-card">
+            <span class="phase-label">Phase 21</span>
+            <span class="level-badge lvl-advanced">Advanced</span>
+            <h3><a href="phases/20-advanced.html">Incident Response</a></h3>
+            <p>Runbooks, post-mortems, and troubleshooting in production.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section bottom-nav" style="display:flex;gap:1rem;justify-content:center;margin-top:2rem;">
+        <a href="architecture.html" class="topbar-btn">Architecture</a>
+        <a href="journey.html" class="topbar-btn">Journey</a>
+        <a href="glossary.html" class="topbar-btn">Glossary</a>
+        <a href="search.html" class="topbar-btn">Search</a>
+      </div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="assets/js/routes.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/vendor/prism.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="assets/vendor/prism-yaml.min.js"></script>
+<script src="assets/vendor/prism-docker.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-nginx.min.js"></script>
+<script src="assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

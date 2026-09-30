@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 02 — OS & Computer Concepts | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="01-fundamentals.html" class="ctx-link">Phase 01: Fundamentals</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 02: OS Concepts</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="03-linux.html" class="ctx-link">Phase 03: Linux</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 02</span>
+          <span class="level-badge beginner">Beginner</span>
+        </div>
+        <h1 class="page-title">OS & Computer Concepts</h1>
+        <p class="page-subtitle">Understand how software actually executes on hardware. This is the foundation for Linux, containers, and Kubernetes.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li>Completion of <a href="01-fundamentals.html">Phase 01: DevOps Fundamentals</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>The difference between a program and a running process</li>
+            <li>How the OS Kernel bridges software and hardware</li>
+            <li>Memory layout (Stack vs. Heap)</li>
+            <li>Networking basics: Ports, sockets, and IPC</li>
+            <li>Understanding File Descriptors (stdin, stdout, stderr)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>The <strong>Operating System (OS)</strong> is the master control program that manages a computer's hardware and provides common services for computer programs. When you execute code, you are not talking directly to the CPU or RAM; you are making requests to the OS <strong>Kernel</strong>.</p>
+          <p>For DevOps, understanding OS concepts is vital because tools like Docker are not magic—they are simply clever wrappers around OS primitives (like namespaces and cgroups) to isolate <strong>processes</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? / Problem it solves -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Treating servers as "black boxes" where you just run code. When an application crashes with "port already in use" or "out of memory", you are left guessing and blindly rebooting servers.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>You understand exactly how processes request resources, how they bind to ports, and where their logs go (stdout). Troubleshooting becomes a scientific process of inspecting process state and file descriptors.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model (for complex topics) -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Think of the OS Kernel as a strict restaurant manager. Programs (customers) cannot just walk into the kitchen (Hardware/CPU/RAM) and start cooking. They must ask the manager (Kernel via system calls) for a table (memory) and food (I/O). The manager decides who gets time in the kitchen (CPU scheduling).</p>
+          <div class="model-chain">
+            <span class="model-item">Source Code (Disk)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Process (Memory/PID)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Kernel (Syscalls)</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Hardware (CPU)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p><strong>Program vs. Process:</strong> A program is a static file on disk (like `dist/main.js`). A process is that code actively running in memory. The OS assigns it a unique Process ID (PID).</p>
+          <p><strong>Memory Layout:</strong> A process gets memory divided into sections:</p>
+          <ul>
+            <li><em>Stack:</em> Stores local variables and function calls. A "stack overflow" happens when functions call each other too many times (infinite recursion), running out of stack space.</li>
+            <li><em>Heap:</em> Dynamic memory allocated at runtime (objects, arrays). If a process forgets to free heap memory, you get a "memory leak."</li>
+            <li><em>Code/Text:</em> The actual compiled instructions.</li>
+          </ul>
+          <p><strong>CPU Scheduling:</strong> A single CPU core can only do one thing at a time. The kernel uses time-slicing and context switching—giving each process a tiny fraction of a second on the CPU—to make it look like hundreds of processes are running simultaneously.</p>
+          <p><strong>Ports and Sockets:</strong> A machine has one IP address but can run many services. Ports (0-65535) act as apartment numbers. The OS binds a process to a port via a network socket. 80=HTTP, 443=HTTPS, 3000=NestJS, 5432=PostgreSQL.</p>
+          <p><strong>File Descriptors (FDs):</strong> Everything in Linux is a file, including network connections and screen output. Every process gets 3 default FDs: <code>0 = Standard Input (stdin)</code>, <code>1 = Standard Output (stdout)</code>, and <code>2 = Standard Error (stderr)</code>. This is why Docker collects container logs simply by reading stdout/stderr!</p>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">USER SPACE VS KERNEL SPACE</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">User Space<br><small>(App, DB, Shell)</small></div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">Kernel Space<br><small>(System Calls)</small></div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Hardware<br><small>(CPU, RAM, Disk)</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <table class="term-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Process</td><td>An executing instance of a program in memory</td><td>Running Node.js</td></tr>
+            <tr><td>PID</td><td>Process ID, a unique number assigned by the OS</td><td>PID 1234</td></tr>
+            <tr><td>System Call (Syscall)</td><td>How a program asks the kernel for a service</td><td><code>open()</code>, <code>read()</code>, <code>write()</code></td></tr>
+            <tr><td>IPC</td><td>Inter-Process Communication</td><td>Pipes <code>|</code>, Sockets, Shared Memory</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>When we run our TaskFlow backend using <code>node dist/main.js</code>:</p>
+          <ol>
+            <li>The OS reads the `node` binary from disk and creates a <strong>Process</strong>.</li>
+            <li>It allocates <strong>Memory</strong> (Stack/Heap) for the NestJS app to run.</li>
+            <li>NestJS makes a system call to bind a <strong>Socket</strong> to <strong>Port 3000</strong>.</li>
+            <li>When <code>console.log('App running')</code> is called, it writes to File Descriptor 1 (<strong>stdout</strong>).</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># See running processes
+ps aux
+
+# See live process CPU/Memory usage
+top
+
+# Find which process is listening on port 3000
+lsof -i :3000
+
+# Kill a stuck process by its PID (e.g., 1234)
+kill -9 1234</code></pre>
+          <div class="code-annotation">↑ These commands allow you to peer into the OS and manage processes manually.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Writing logs to a file inside a container</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Always log to <code>stdout</code> and <code>stderr</code> in modern DevOps (12-factor apps). The infrastructure (Docker/Kubernetes) handles capturing those file descriptors.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Error: EADDRINUSE :::3000</span>
+            <span class="ts-cause">Cause: Another process (usually an old instance of your app) is already bound to port 3000.</span>
+            <span class="ts-fix">Fix: <code>lsof -i :3000</code> to find the PID, then <code>kill &lt;PID&gt;</code>.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Inspect Your OS State</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Open a terminal (Linux/macOS/Git Bash).</li>
+            <li>Run <code>top</code> and identify which process is using the most CPU. Press <code>q</code> to exit.</li>
+            <li>Start a temporary web server: <code>python3 -m http.server 8080</code> (or run any app).</li>
+            <li>Open a <em>new</em> terminal tab and run <code>lsof -i :8080</code>. Find the PID.</li>
+            <li>Kill it using <code>kill &lt;PID&gt;</code>. Observe the first terminal stop running the server.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why do containers expect your app to log to stdout instead of writing to a text file?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Because standard output (stdout, FD 1) is a universal stream managed by the OS. Docker simply connects to this stream and routes the logs wherever needed, without needing to know where your specific application stores files on disk.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="03-linux.html" class="cross-link-chip">🐧 Linux Essentials</a>
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next (Continuity Bridge) -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you understand what processes, ports, and file descriptors are theoretically, it's time to get your hands dirty. 90% of servers run Linux, meaning you will interact with the OS primarily through the Linux command line. Let's master it in Phase 03.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+</body>
+</html>

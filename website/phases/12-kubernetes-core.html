@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 12 — Kubernetes Core | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/sidebar.css">
+  <link rel="stylesheet" href="../assets/css/content.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/vendor/prism.min.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="../index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+
+      <!-- Section 1: Context Banner -->
+      <div class="context-banner">
+        <div class="ctx-block ctx-prev">
+          <span class="ctx-label">← Came from</span>
+          <a href="11-cloud.html" class="ctx-link">Phase 11: Cloud & AWS</a>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block">
+          <span class="ctx-label">You are here</span>
+          <span class="ctx-current-text">Phase 12: Kubernetes Core</span>
+        </div>
+        <div class="ctx-arrow">▶</div>
+        <div class="ctx-block ctx-next">
+          <span class="ctx-label">Going to →</span>
+          <a href="13-kubernetes-networking.html" class="ctx-link">Phase 13: Kubernetes Networking</a>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-meta">
+          <span class="phase-label">Phase 12</span>
+          <span class="level-badge intermediate">Intermediate</span>
+        </div>
+        <h1 class="page-title">Kubernetes Core</h1>
+        <p class="page-subtitle">Master container orchestration at scale with Pods, Deployments, and Kubernetes architecture principles.</p>
+      </div>
+
+      <!-- Section 2: Prerequisites + What You'll Learn -->
+      <div class="prereq-grid">
+        <div class="prereq-card card-prereq">
+          <div class="prereq-card-title">⚠️ Prerequisites</div>
+          <ul>
+            <li><a href="08-docker-core.html">Phase 6: Docker</a></li>
+            <li><a href="11-cloud.html">Phase 11: Cloud & AWS</a></li>
+          </ul>
+        </div>
+        <div class="prereq-card card-learn">
+          <div class="prereq-card-title">✅ What You Will Learn</div>
+          <ul>
+            <li>Kubernetes cluster architecture (Control Plane vs Worker Nodes).</li>
+            <li>The declarative reconciliation loop.</li>
+            <li>Working with Pods, ReplicaSets, and Deployments.</li>
+            <li>Using kubectl to deploy and manage workloads.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3: What is it? -->
+      <div class="content-section">
+        <h2 id="what-is-it" class="section-title"><span class="section-icon">💡</span> What Is It?</h2>
+        <div class="prose">
+          <p>Kubernetes (K8s) is an open-source container orchestration system originally designed by Google. Think of it as an operating system for a cluster of machines. It handles deciding where containers should run, restarting them if they crash, scaling them out, and managing their networking seamlessly.</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Why do we need it? -->
+      <div class="content-section">
+        <h2 id="why" class="section-title"><span class="section-icon">🎯</span> Why Do We Need It?</h2>
+        <div class="before-after">
+          <div class="before-after-panel panel-before">
+            <div class="before-after-label">Before</div>
+            <p>Docker Compose is great, but it doesn't solve running containers across multiple servers. If a server dies, containers don't auto-restart elsewhere. Rolling updates and self-healing had to be scripted manually.</p>
+          </div>
+          <div class="before-after-panel panel-after">
+            <div class="before-after-label">After</div>
+            <p>Kubernetes orchestrates containers across hundreds of hosts. It ensures the "desired state" matches reality. If a node fails, K8s reschedules the workloads automatically.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Mental Model -->
+      <div class="content-section">
+        <h2 id="mental-model" class="section-title"><span class="section-icon">🧠</span> Mental Model</h2>
+        <div class="mental-model">
+          <div class="mental-model-title">🧠 Mental Model</div>
+          <p class="mental-model-analogy">Imagine a restaurant manager (Kubernetes). You give them a menu (YAML manifest) saying "We need 3 chefs working." If a chef gets sick (container crashes), the manager automatically hires a new one to keep the kitchen running exactly as requested.</p>
+          <div class="model-chain">
+            <span class="model-item">Cluster</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Node</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item model-focus">Deployment</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">ReplicaSet</span>
+            <span class="model-arrow">→</span>
+            <span class="model-item">Pod</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6: How it works -->
+      <div class="content-section">
+        <h2 id="how-it-works" class="section-title"><span class="section-icon">⚙️</span> How It Works</h2>
+        <div class="prose">
+          <p>The core of Kubernetes is its declarative reconciliation loop. You tell Kubernetes <em>what</em> you want (the desired state stored in <code>etcd</code>), and controllers continuously work to ensure the cluster matches that state.</p>
+          <p>The architecture consists of:</p>
+          <ul>
+            <li><strong>Control Plane (Master):</strong> The brain.
+              <ul>
+                <li><code>kube-apiserver</code>: The frontend, handling all REST API calls.</li>
+                <li><code>etcd</code>: Distributed key-value store containing cluster state.</li>
+                <li><code>kube-scheduler</code>: Assigns new Pods to Nodes.</li>
+                <li><code>kube-controller-manager</code>: Runs the controllers managing nodes, deployments, etc.</li>
+              </ul>
+            </li>
+            <li><strong>Worker Nodes:</strong> Where containers run.
+              <ul>
+                <li><code>kubelet</code>: The agent on each node ensuring containers are running.</li>
+                <li><code>kube-proxy</code>: Manages network rules (iptables) for Service routing.</li>
+                <li>Container Runtime: e.g. <code>containerd</code> (Docker is no longer used directly).</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 7: Architecture / Flow Diagram -->
+      <div class="content-section">
+        <h2 id="architecture" class="section-title"><span class="section-icon">🏗️</span> Architecture & Workflow</h2>
+        <div class="flow-diagram">
+          <div class="flow-diagram-title">KUBERNETES RECONCILIATION</div>
+          <div class="flow-h">
+            <div class="flow-node">
+              <div class="flow-box">kubectl apply</div>
+              <div class="flow-label">Declare state</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box flow-box-accent">API Server & etcd</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Controller Manager</div>
+              <div class="flow-label">Detect drift</div>
+            </div>
+            <div class="flow-arrow-h">→</div>
+            <div class="flow-node">
+              <div class="flow-box">Kubelet</div>
+              <div class="flow-label">Start Pods</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Core Concepts / Terminology -->
+      <div class="content-section">
+        <h2 id="concepts" class="section-title"><span class="section-icon">📚</span> Core Concepts</h2>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-card-icon">📦</div>
+            <div class="concept-card-title">Pod</div>
+            <div class="concept-card-desc">The smallest atomic unit. Contains one or more containers sharing a network namespace and volumes. Pods are ephemeral.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🔄</div>
+            <div class="concept-card-title">Deployment</div>
+            <div class="concept-card-desc">A higher-level abstraction that manages ReplicaSets, enabling declarative updates, scaling, and rollbacks.</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-card-icon">🏷️</div>
+            <div class="concept-card-title">Labels & Selectors</div>
+            <div class="concept-card-desc">Key-value tags applied to objects. Used extensively by Services and Deployments to link components dynamically.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 9: TaskFlow Connection -->
+      <div class="content-section">
+        <h2 id="taskflow" class="section-title"><span class="section-icon">🔗</span> How This Applies to TaskFlow</h2>
+        <div class="taskflow-card">
+          <div class="taskflow-card-header">
+            <span class="taskflow-tag">TaskFlow Project</span>
+            <h4>Our Running Example</h4>
+          </div>
+          <p>For TaskFlow, we use a <strong>Deployment</strong> to run 3 replicas of the NestJS backend and another Deployment for the React Vite frontend. This ensures high availability. We use labels like <code>app: taskflow-backend</code> so that our network routing can find these pods, even as Kubernetes dynamically creates and destroys them during scaling or updates.</p>
+        </div>
+      </div>
+
+      <!-- Section 10: Commands & Configuration -->
+      <div class="content-section">
+        <h2 id="commands" class="section-title"><span class="section-icon">💻</span> Commands & Configuration</h2>
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="code-block-lang">yaml</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-backend
+  labels:
+    app: taskflow-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-backend
+  template:
+    metadata:
+      labels:
+        app: taskflow-backend
+    spec:
+      containers:
+      - name: backend
+        image: gitlab.com/yourname/taskflow/backend:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATABASE_URL
+          value: "postgres://user:pass@db:5432/taskflow"</code></pre>
+          <div class="code-annotation">↑ Deployment YAML for the TaskFlow backend ensuring 3 instances are always running.</div>
+        </div>
+
+        <div class="code-block-wrapper" style="margin-top: 1rem;">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash"># Apply the configuration
+kubectl apply -f deployment.yaml
+
+# Check the status of pods
+kubectl get pods -l app=taskflow-backend
+
+# View logs for a specific pod
+kubectl logs deploy/taskflow-backend
+
+# Access the pod locally for testing
+kubectl port-forward deploy/taskflow-backend 3000:3000</code></pre>
+          <div class="code-annotation">↑ Core kubectl commands for interacting with your workloads.</div>
+        </div>
+      </div>
+
+      <!-- Section 11: Common Mistakes -->
+      <div class="content-section">
+        <h2 id="mistakes" class="section-title"><span class="section-icon">⚠️</span> Common Mistakes</h2>
+        <div class="mistake-card">
+          <div class="mistake-title">❌ Deploying naked Pods</div>
+          <div class="mistake-fix">✅ <strong>Fix:</strong> Never deploy raw Pods in production. They are ephemeral and will not restart if the Node fails. Always wrap them in a Deployment.</div>
+        </div>
+      </div>
+
+      <!-- Section 12: Troubleshooting -->
+      <div class="content-section">
+        <h2 id="troubleshooting" class="section-title"><span class="section-icon">🔧</span> Troubleshooting</h2>
+        <ul class="troubleshoot-list">
+          <li>
+            <span class="ts-symptom">Symptom: Pod status is CrashLoopBackOff</span>
+            <span class="ts-cause">Cause: The container application is crashing upon startup.</span>
+            <span class="ts-fix">Fix: Check logs with <code>kubectl logs &lt;pod-name&gt;</code> to find the application error.</span>
+          </li>
+          <li>
+            <span class="ts-symptom">Symptom: Pod status is ImagePullBackOff</span>
+            <span class="ts-cause">Cause: Kubelet cannot fetch the container image.</span>
+            <span class="ts-fix">Fix: Verify the image name, tag, and registry credentials (imagePullSecrets).</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 13: Practice Exercise -->
+      <div class="content-section">
+        <h2 id="exercise" class="section-title"><span class="section-icon">🏋️</span> Practice Exercise</h2>
+        <div class="exercise-block">
+          <div class="exercise-header">
+            <span class="exercise-badge">Hands-On Exercise</span>
+            <h3 class="exercise-title">Create and scale a Deployment</h3>
+          </div>
+          <ol class="exercise-steps">
+            <li>Install `minikube` or use Docker Desktop Kubernetes.</li>
+            <li>Write a `nginx-deploy.yaml` file declaring 2 replicas of the `nginx:alpine` image.</li>
+            <li>Run `kubectl apply -f nginx-deploy.yaml`.</li>
+            <li>Observe the pods: `kubectl get pods -w`.</li>
+            <li>Delete one of the pods manually: `kubectl delete pod &lt;pod-name&gt;`. Watch how Kubernetes instantly creates a new one.</li>
+            <li>Scale it up: `kubectl scale deployment nginx-deployment --replicas=5`.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 14: Knowledge Check -->
+      <div class="content-section">
+        <h2 id="knowledge-check" class="section-title"><span class="section-icon">🧪</span> Knowledge Check</h2>
+        <div class="knowledge-check">
+          <div class="kc-item">
+            <button class="kc-question" aria-expanded="false">
+              <span class="kc-q-icon">Q</span>
+              <span>Why doesn't Kubernetes use Docker anymore?</span>
+              <span class="kc-chevron">▾</span>
+            </button>
+            <div class="kc-answer"><p>Kubernetes removed <i>Dockershim</i> because Docker is a heavy, multi-tool daemon not fully compliant with the Container Runtime Interface (CRI). Kubernetes now communicates directly with CRI-compatible runtimes like <code>containerd</code> or <code>CRI-O</code>.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 15: Cross-Links -->
+      <div class="content-section">
+        <h2 id="related" class="section-title"><span class="section-icon">🔗</span> Related Concepts</h2>
+        <div class="cross-links">
+          <a href="08-docker-core.html" class="cross-link-chip">🐳 Docker</a>
+          <a href="13-kubernetes-networking.html" class="cross-link-chip">🌐 K8s Networking</a>
+        </div>
+      </div>
+
+      <!-- Section 16: What comes next -->
+      <div class="continuity-bridge">
+        <div class="continuity-bridge-title">🚀 What Comes Next</div>
+        <p>Now that you have Pods running across the cluster, how do you communicate with them when their IP addresses keep changing? In the next phase, we'll dive into Kubernetes Networking with Services and Ingress to expose your apps to the world.</p>
+      </div>
+
+      <!-- Section 17: Bottom Navigation -->
+      <div class="bottom-nav"></div>
+
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="../assets/js/routes.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/progress.js"></script>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/nav.js"></script>
+<script src="../assets/vendor/prism.min.js"></script>
+<script src="../assets/vendor/prism-bash.min.js"></script>
+<script src="../assets/vendor/prism-yaml.min.js"></script>
+<script src="../assets/vendor/prism-docker.min.js"></script>
+<script src="../assets/vendor/prism-javascript.min.js"></script>
+<script src="../assets/vendor/prism-nginx.min.js"></script>
+<script src="../assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>

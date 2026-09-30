@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-World Architecture | DevOps Mastery</title>
+  <script>
+    (function(){var t=localStorage.getItem('devops_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sidebar.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/vendor/prism.min.css">
+  <style>
+    .arch-diagram { display: flex; flex-direction: column; gap: 2rem; background: var(--bg-alt); padding: 2rem; border-radius: 8px; border: 1px solid var(--border); overflow-x: auto; }
+    .arch-row { display: flex; gap: 2rem; align-items: center; justify-content: center; min-width: 800px; }
+    .arch-box { padding: 1rem; border: 2px solid var(--accent); border-radius: 8px; background: var(--bg); text-align: center; min-width: 150px; text-decoration: none; color: var(--text); }
+    .arch-box:hover { background: var(--accent); color: white; }
+    .arch-box-title { font-weight: bold; margin-bottom: 0.5rem; }
+    .arch-cloud-boundary { border: 2px dashed var(--border); padding: 2rem; border-radius: 8px; position: relative; }
+    .arch-cloud-label { position: absolute; top: -12px; left: 20px; background: var(--bg-alt); padding: 0 10px; font-weight: bold; color: var(--text-muted); }
+    .table-container { overflow-x: auto; margin-top: 2rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--bg-alt); font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:var(--sp-4);flex:1;min-width:0;">
+    <button class="topbar-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="site-logo"><span class="logo-accent">DevOps</span> Mastery</a>
+    <nav class="topbar-breadcrumb" id="breadcrumb"></nav>
+  </div>
+  <div class="topbar-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="search.html" class="topbar-btn" title="Search">🔍</a>
+    <button class="topbar-btn" id="themeToggle" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <nav id="sidebarNav"></nav>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="content-inner">
+      <div class="page-header">
+        <h1 class="page-title">Real-World Architecture</h1>
+        <p class="page-subtitle">A comprehensive view of the entire DevOps infrastructure stack you will build for the TaskFlow project.</p>
+        <p>This diagram represents a production-grade infrastructure architecture. It shows how code flows from a developer's machine all the way to a highly available, monitored environment in the cloud.</p>
+      </div>
+
+      <div class="content-section">
+        <div class="arch-diagram">
+          <div class="arch-row">
+            <a href="phases/03-linux.html" class="arch-box">
+              <div class="arch-box-title">Developer</div>
+              <small>Local Machine</small>
+            </a>
+            <span>→</span>
+            <a href="phases/06-git.html" class="arch-box">
+              <div class="arch-box-title">Git Repository</div>
+              <small>GitLab</small>
+            </a>
+            <span>→</span>
+            <a href="phases/10-cicd.html" class="arch-box" style="border-color: #fca311;">
+              <div class="arch-box-title">CI Pipeline</div>
+              <small>GitLab CI</small>
+            </a>
+          </div>
+
+          <div class="arch-row">
+            <div style="flex: 1;"></div>
+            <span>↓ pushes image</span>
+            <div style="flex: 1;"></div>
+          </div>
+
+          <div class="arch-row">
+            <a href="phases/16-gitops.html" class="arch-box">
+              <div class="arch-box-title">GitOps Repo</div>
+              <small>Helm Values</small>
+            </a>
+            <span>← updates</span>
+            <a href="phases/09-docker-advanced.html" class="arch-box">
+              <div class="arch-box-title">Container Registry</div>
+              <small>Docker Images</small>
+            </a>
+          </div>
+
+          <div class="arch-row">
+            <span>↓ pulls config</span>
+            <div style="flex: 2;"></div>
+          </div>
+
+          <div class="arch-cloud-boundary">
+            <span class="arch-cloud-label">AWS Cloud Boundary (VPC)</span>
+            
+            <div class="arch-row" style="margin-bottom: 2rem;">
+              <a href="phases/16-gitops.html" class="arch-box" style="border-color: #fca311;">
+                <div class="arch-box-title">Argo CD</div>
+                <small>GitOps Controller</small>
+              </a>
+              <span>→ applies to →</span>
+              <a href="phases/13-kubernetes-networking.html" class="arch-box">
+                <div class="arch-box-title">Load Balancer</div>
+                <small>AWS ALB / Ingress</small>
+              </a>
+            </div>
+
+            <div class="arch-cloud-boundary" style="border-color: #10b981;">
+              <span class="arch-cloud-label" style="color: #10b981;">Kubernetes Cluster (EKS)</span>
+              
+              <div class="arch-row" style="margin-bottom: 2rem;">
+                <a href="phases/12-kubernetes-core.html" class="arch-box">
+                  <div class="arch-box-title">Frontend Pods</div>
+                  <small>React/Nginx</small>
+                </a>
+                <span>→</span>
+                <a href="phases/12-kubernetes-core.html" class="arch-box">
+                  <div class="arch-box-title">Backend Pods</div>
+                  <small>NestJS API</small>
+                </a>
+                <span>→</span>
+                <a href="phases/14-kubernetes-config.html" class="arch-box">
+                  <div class="arch-box-title">Database</div>
+                  <small>PostgreSQL</small>
+                </a>
+              </div>
+
+              <div class="arch-row">
+                <a href="phases/18-monitoring.html" class="arch-box" style="border-color: #ef4444;">
+                  <div class="arch-box-title">Prometheus</div>
+                  <small>Metrics Scraping</small>
+                </a>
+                <span>→</span>
+                <a href="phases/18-monitoring.html" class="arch-box" style="border-color: #ef4444;">
+                  <div class="arch-box-title">Grafana</div>
+                  <small>Dashboards</small>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 id="reference" class="section-title"><span class="section-icon">📋</span> Component Reference</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Technology</th>
+                <th>Phase</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Source Control</td>
+                <td>GitLab</td>
+                <td><a href="phases/06-git.html">Phase 06</a></td>
+                <td>Stores source code, tracks history, facilitates collaboration.</td>
+              </tr>
+              <tr>
+                <td>CI Pipeline</td>
+                <td>GitLab CI/CD</td>
+                <td><a href="phases/10-cicd.html">Phase 07</a></td>
+                <td>Automates testing, building, and pushing container images.</td>
+              </tr>
+              <tr>
+                <td>Container Registry</td>
+                <td>GitLab Registry</td>
+                <td><a href="phases/09-docker-advanced.html">Phase 08</a></td>
+                <td>Securely stores and distributes built Docker images.</td>
+              </tr>
+              <tr>
+                <td>GitOps Controller</td>
+                <td>Argo CD</td>
+                <td><a href="phases/16-gitops.html">Phase 14</a></td>
+                <td>Synchronizes cluster state with the GitOps configuration repo.</td>
+              </tr>
+              <tr>
+                <td>Infrastructure</td>
+                <td>Terraform / AWS</td>
+                <td><a href="phases/17-terraform.html">Phase 13</a></td>
+                <td>Provisions VPCs, Subnets, and the EKS cluster declaratively.</td>
+              </tr>
+              <tr>
+                <td>Container Orchestration</td>
+                <td>Kubernetes (EKS)</td>
+                <td><a href="phases/11-cloud.html">Phase 15</a></td>
+                <td>Manages, scales, and heals the application containers.</td>
+              </tr>
+              <tr>
+                <td>Traffic Routing</td>
+                <td>Ingress / ALB</td>
+                <td><a href="phases/13-kubernetes-networking.html">Phase 11</a></td>
+                <td>Routes external user traffic to the correct internal services.</td>
+              </tr>
+              <tr>
+                <td>Monitoring Stack</td>
+                <td>Prometheus & Grafana</td>
+                <td><a href="phases/18-monitoring.html">Phase 16</a></td>
+                <td>Collects metrics and provides visual dashboards for observability.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2 id="data-flows" class="section-title"><span class="section-icon">🔄</span> Key Data Flows</h2>
+        
+        <div class="prose">
+          <h3>1. Code → Production Flow (Deploy)</h3>
+          <p>When a developer pushes code, the CI pipeline builds a new Docker image and pushes it to the Container Registry. The pipeline then updates a version tag in the GitOps repository. Argo CD detects this Git change and automatically applies the new Kubernetes manifests to the cluster, pulling the new image and replacing the old Pods.</p>
+
+          <h3>2. User Request → Response Flow (Traffic)</h3>
+          <p>A user navigates to the application URL. The request hits the AWS Application Load Balancer, which routes traffic into the K8s cluster via the Ingress Controller. The Ingress rules direct it to the Frontend Service, which passes it to a Frontend Pod. If data is needed, the Frontend Pod calls the Backend Service, which hits a Backend Pod. Finally, the Backend Pod queries the PostgreSQL database.</p>
+
+          <h3>3. Metrics → Dashboard Flow (Observability)</h3>
+          <p>The Pods expose a <code>/metrics</code> endpoint. Prometheus, running inside the cluster, continuously scrapes this endpoint to pull in timeseries data (CPU usage, request rates). Grafana connects to Prometheus as a data source and renders this data into visual, real-time dashboards for engineers to monitor.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="page-toc" id="pageToc">
+    <div class="toc-label">On this page</div>
+    <nav id="tocNav"></nav>
+  </aside>
+</div>
+
+<script src="assets/js/routes.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/vendor/prism.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="assets/vendor/prism-yaml.min.js"></script>
+<script src="assets/vendor/prism-docker.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-nginx.min.js"></script>
+<script src="assets/vendor/prism-hcl.min.js"></script>
+</body>
+</html>
