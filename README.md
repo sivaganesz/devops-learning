@@ -1,4 +1,4 @@
-# DevOps Mastery — Self-Paced Learning Platform & Curriculum
+# DevOps Mastery — Self-Paced Learning Platform & Curriculum 
 
 A complete, self-contained, offline-first static learning platform and curriculum designed to take a developer from **DevOps beginner to production engineer**.
 
